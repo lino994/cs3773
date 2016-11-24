@@ -3,7 +3,7 @@ package com.example.linos.testapp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class Login extends AppCompatActivity implements {
+public class Login extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
