@@ -26,34 +26,23 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        btn = (Button)findViewById(R.id.bLogin);
         medit   = (EditText)findViewById(R.id.edUsername);
         epass = (EditText)findViewById(R.id.edPassword);
 
-        btn.setOnClickListener(
-                new View.OnClickListener()
-                {
-                    public void onClick(View view)
-                    {
-                        uname = medit.getText().toString();
-                        pass = epass.getText().toString();
-                        Log.v("Username", uname);
-                        Log.v("Password", pass);
-                        if(pass.equals("admin") && uname.equals("admin")){
-                            Intent myIntent = new Intent(view.getContext(), Messaging.class);
-                            startActivityForResult(myIntent, 0);
-                        }
-                        else {
 
-                            Toast.makeText(getApplicationContext(),"incorrect username/password",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
     public void Login(View view) {
 
-
-        Toast.makeText(getApplicationContext(),"login",Toast.LENGTH_SHORT).show();
+        uname = medit.getText().toString();
+        pass = epass.getText().toString();
+        Log.v("Username", uname);
+        Log.v("Password", pass);
+        if(pass.equals("admin") && uname.equals("admin")){
+            Intent myIntent = new Intent(view.getContext(), Messaging.class);
+            startActivityForResult(myIntent, 0);
+        }
+        else {
+            Toast.makeText(getApplicationContext(),"incorrect username/password",Toast.LENGTH_SHORT).show();
+        }
     }
 }
