@@ -3,7 +3,6 @@ package com.example.linos.testapp;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -24,90 +23,70 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import static android.R.attr.button;
+import static android.R.attr.start;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/testConnect.php";
-    Button bForgot;
-    EditText medit;
-    EditText epass;
-    String uname;
-    String pass;
+public class ForgotPassword extends AppCompatActivity {
+    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getSecurityQuestion.php";
+    Button bSubmit;
+    EditText uedit;
+    //String uname;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        medit = (EditText) findViewById(R.id.edUsername);
-        epass = (EditText) findViewById(R.id.edPassword);
-        bForgot = (Button) findViewById(R.id.bForgot) ;
-        bForgot.setOnClickListener(new View.OnClickListener()
+        setContentView(R.layout.activity_forgot_password);
+        uedit = (EditText) findViewById(R.id.edUserForgot);
+        bSubmit = (Button) findViewById(R.id.bSubmit);
+        bSubmit.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(v.getContext(), ForgotPassword.class);
-                startActivity(intent);
+                String uname = uedit.getText().toString();
+                initForgot(uname, v);
             }
         });
-
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    public void initForgot(final String uname, final View v) {
+        class ForgotASync extends AsyncTask<String, Void, String> {
 
-    public void Login(View view) {
-        String uname=medit.getText().toString();
-        String pass=epass.getText().toString();
-
-        callLogin(uname, pass, view);
-    }
-
-    public void callLogin(String uname, String pass, final View view){
-        class LoginASync extends AsyncTask <String, Void, String>{
-            //uname=medit.getText().toString();
-            //String pass=epass.getText().toString();
-
-            //Log.v("Username",uname);
-            //Log.v("Password",pass);
             private Dialog loadingDiag;
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                loadingDiag = ProgressDialog.show(MainActivity.this,"Please Wait","loading..");
+                loadingDiag = ProgressDialog.show(ForgotPassword.this,"Please Wait","loading..");
             }
 
             @Override
             protected String doInBackground(String... params) {
                 String uri = params[0];
                 String uname = params[1];
-                String pass = params[2];
 
                 try{
                     /******************TEST USERS****************************
-                        Username : UserOne
-                        Password : p@ss1
+                     Username : UserOne
+                     Password : p@ss1
 
-                        Username : UserTwo
-                        Password : p@ss2
+                     Username : UserTwo
+                     Password : p@ss2
 
                      ****************************************************/
                     String data = URLEncoder.encode("uname", "UTF-8")
                             + "=" + URLEncoder.encode(uname, "UTF-8");
-                    data += "&" + URLEncoder.encode("pass", "UTF-8")
-                            + "=" + URLEncoder.encode(pass, "UTF-8");
+
                     URL url = new URL(uri);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -125,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.v("line: ", line);
                         sb.append(line + "\n");
                     }
-                        Log.v("string :", sb.toString());
-                        return sb.toString();
+                    Log.v("string :", sb.toString());
+                    return sb.toString();
 
                 }catch(Exception e){
                     Log.v("Conn Error  :", e.getMessage());
@@ -138,29 +117,30 @@ public class MainActivity extends AppCompatActivity {
                 loadingDiag.dismiss();
                 String r = result.trim();
                 Log.v("result: ", r);
-                if(r.equals("success")){
-                    Intent myIntent = new Intent(view.getContext(), Messaging.class);
-                    startActivityForResult(myIntent, 0);
-                }else if (r.equals("failure")) {
-                    Toast.makeText(getApplicationContext(), "incorrect username/password", Toast.LENGTH_SHORT).show();
+                if (r.equals("failure to find userName")) {
+                    Toast.makeText(getApplicationContext(), "Unable to find Username", Toast.LENGTH_SHORT).show();
                 }else {
-                    Log.v("Result Error", result);
+                   // TextView qedit = (TextView) findViewById(R.id.questionView);
+                   // qedit.setText(result);
+                    Intent newintent = new Intent(v.getContext(), AnswerQuestion.class );
+                    newintent.putExtra("result", result);
+                    newintent.putExtra("username",uname);
+                    startActivity(newintent);
                 }
             }
 
         }
 
-        LoginASync las = new LoginASync();
-        las.execute(LINK ,uname, pass);
+        ForgotASync las = new ForgotASync();
+        las.execute(LINK ,uname);
     }
-
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("Main Page") // TODO: Define a title for the content shown.
+                .setName("ForgotPassword Page") // TODO: Define a title for the content shown.
                 // TODO: Make sure this auto-generated URL is correct.
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
