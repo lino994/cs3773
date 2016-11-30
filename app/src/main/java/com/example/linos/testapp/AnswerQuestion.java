@@ -114,8 +114,9 @@ public class AnswerQuestion extends AppCompatActivity {
                 if (r.equals("failure")) {
                     Toast.makeText(getApplicationContext(), "Incorrect Answer", Toast.LENGTH_SHORT).show();
                 }else {
-                    Intent intent = new Intent(v.getContext(), ResetPassword.class );
-                    startActivity(intent);
+                    Intent ResetIntent = new Intent(v.getContext(), ResetPassword.class );
+                    ResetIntent.putExtra("uname", uname);
+                    startActivity(ResetIntent);
                 }
             }
 
