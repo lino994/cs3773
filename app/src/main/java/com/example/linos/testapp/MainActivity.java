@@ -69,13 +69,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void Login(View view) {
-        String uname=medit.getText().toString();
-        String pass=epass.getText().toString();
+        uname=medit.getText().toString();
+        pass=epass.getText().toString();
 
         callLogin(uname, pass, view);
     }
 
-    public void callLogin(String uname, String pass, final View view){
+    public void callLogin(final String uname, String pass, final View view){
         class LoginASync extends AsyncTask <String, Void, String>{
             //uname=medit.getText().toString();
             //String pass=epass.getText().toString();
@@ -139,8 +139,16 @@ public class MainActivity extends AppCompatActivity {
                 String r = result.trim();
                 Log.v("result: ", r);
                 if(r.equals("success")){
-                    Intent myIntent = new Intent(view.getContext(), Messaging.class);
-                    startActivityForResult(myIntent, 0);
+                    if(uname.equals("admin")){
+                        Intent myIntent = new Intent(view.getContext(), Admin.class);
+                        startActivityForResult(myIntent, 0);
+                        finish();
+                    }
+                    else {
+                        Intent myIntent = new Intent(view.getContext(), Messaging.class);
+                        startActivityForResult(myIntent, 0);
+                        finish();
+                    }
                 }else if (r.equals("failure")) {
                     Toast.makeText(getApplicationContext(), "incorrect username/password", Toast.LENGTH_SHORT).show();
                 }else {
