@@ -2,6 +2,7 @@ package com.example.linos.testapp;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -31,11 +32,19 @@ import java.net.URLEncoder;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/testConnect.php";
+    private static final String COUNT = "LogCount";
+    private static final String TIME = "Time";
+
     Button bForgot;
     EditText medit;
     EditText epass;
     String uname;
     String pass;
+
+    int logCounter = 0;
+    long time = 0;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -51,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
         medit = (EditText) findViewById(R.id.edUsername);
         epass = (EditText) findViewById(R.id.edPassword);
         bForgot = (Button) findViewById(R.id.bForgot) ;
+
+        pref = this.getSharedPreferences("LoginTrack", Context.MODE_PRIVATE);
+        editor = pref.edit();
+
         bForgot.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -155,10 +168,23 @@ public class MainActivity extends AppCompatActivity {
                         finish();
                     }
                 }else if (r.equals("failure")) {
-                    Toast.makeText(getApplicationContext(), "incorrect username/password", Toast.LENGTH_SHORT).show();
-                }else {
+                    //Toast.makeText(getApplicationContext(), "incorrect username/password", Toast.LENGTH_SHORT).show();
+                    logCounter++;
+                    editor.putString(uname+COUNT, Integer.toString(logCounter));
+                    long currentTime = System.currentTimeMillis();
+                    editor.putString(uname+TIME, Long.toString(currentTime));
+                    editor.commit();
+
+                    if ((logCounter > 2) && (time < 30000)) {
+
+                        Toast.makeText(getApplicationContext(), "Maximum attempted reached!\nTry again in 30s", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                        Toast.makeText(getApplicationContext(), "incorrect username/password ", Toast.LENGTH_SHORT).show();
+                } else {
                     Log.v("Result Error", result);
                 }
+
             }
 
         }

@@ -24,7 +24,8 @@ public class Admin extends Activity implements AdapterView.OnItemSelectedListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message);
-
+        Intent myIn = getIntent();
+        uname = myIn.getExtras().getString("uname");
         bLogout = (Button) findViewById(R.id.bLogout);
         bLogout.setOnClickListener(new View.OnClickListener()
         {

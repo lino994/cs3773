@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/setSecurityQuestion.php";
+    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/setQuestion.php";
     String secQuestion;
     String secAnswer;
     String uname;
@@ -47,9 +47,14 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onClick(View v)
             {
+                secAnswer = edAnswer.getText().toString();
                 if(uname == null || secQuestion == null || secAnswer == null){
+                    Log.v("uname",uname);
+                    Log.v("secQuest",secQuestion);
+                    Log.v("secAns",secAnswer);
                     Toast.makeText(getApplicationContext(), "Field Empty", Toast.LENGTH_SHORT).show();
                 }else {
+                    Log.v("secAns",secAnswer);
                     setQuestion(uname, secQuestion, secAnswer, v);
                 }
             }
@@ -80,6 +85,21 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
     }
 
     @Override
+    public void onBackPressed(){
+        if(uname.equals("admin")) {
+                Intent myIntent = new Intent(SetSecQuestion.this, Admin.class);
+                myIntent.putExtra("uname", uname);
+                startActivity(myIntent);
+                finish();
+        }else{
+                Intent myIntent = new Intent(SetSecQuestion.this, Messaging.class);
+                myIntent.putExtra("uname", uname);
+                startActivity(myIntent);
+                finish();
+        }
+    }
+
+    @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         count = count +1;
         // On selecting a spinner item
@@ -88,16 +108,7 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
             Log.v("Selected", item);
             // Showing selected spinner item
             Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-            if(item.equals("Name of First Pet?")){
-                secQuestion = "Name of First Pet?";
-
-            }else if(item.equals("Mother's Maiden Name?")){
-                secQuestion = "Mother's Maiden Name?";
-
-            }else if(item.equals("Set Security Question")){
-                secQuestion = "Set Security Question?";
-
-            }
+            secQuestion = item;
         }
     }
 
@@ -123,7 +134,7 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
                 String uri = params[0];
                 String uname = params[1];
                 String question = params[2];
-                String answer = params[2];
+                String answer = params[3];
 
                 try{
                     /******************TEST USERS****************************
@@ -136,6 +147,10 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
                      ****************************************************/
                     String data = URLEncoder.encode("uname", "UTF-8")
                             + "=" + URLEncoder.encode(uname, "UTF-8");
+                    data += "&" + URLEncoder.encode("question", "UTF-8")
+                            + "=" + URLEncoder.encode(question, "UTF-8");
+                    data += "&" + URLEncoder.encode("answer", "UTF-8")
+                            + "=" + URLEncoder.encode(answer, "UTF-8");
 
                     URL url = new URL(uri);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -167,15 +182,16 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
                 loadingDiag.dismiss();
                 String r = result.trim();
                 Log.v("result: ", r);
-                if (r.equals("failure to find userName")) {
-                    Toast.makeText(getApplicationContext(), "Unable to find Username", Toast.LENGTH_SHORT).show();
-                }else {
-                    // TextView qedit = (TextView) findViewById(R.id.questionView);
-                    // qedit.setText(result);
-                    Intent newintent = new Intent(v.getContext(), AnswerQuestion.class );
-                    newintent.putExtra("result", result);
-                    newintent.putExtra("username",uname);
-                    startActivity(newintent);
+                if(uname == "admin") {
+                    Intent myIntent = new Intent(SetSecQuestion.this, Admin.class);
+                    myIntent.putExtra("uname", uname);
+                    startActivity(myIntent);
+                    finish();
+                }else{
+                    Intent myIntent = new Intent(SetSecQuestion.this, Messaging.class);
+                    myIntent.putExtra("uname", uname);
+                    startActivity(myIntent);
+                    finish();
                 }
             }
 
