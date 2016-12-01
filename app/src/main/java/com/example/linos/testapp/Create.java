@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -40,6 +41,7 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
     String sQuestion;
     String aName;
     String sAnswer;
+    String newPassword;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,30 +55,40 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
             public void onClick(View v) {
                 aName = edaname.getText().toString();
                 uName=eduname.getText().toString();
-                sAnswer=edanswer.getText().toString();
+               // sAnswer=edanswer.getText().toString();
                 String quest = "what";
-                String pass = "the";
-                callCreate(uName,aName,pass,v);
-                Toast.makeText(getApplicationContext(), "Created User", Toast.LENGTH_SHORT).show();
-                Intent myIntent = new Intent(v.getContext(), Admin.class);
-                startActivityForResult(myIntent, 0);
-                finish();
+                PasswordGenerator pg = new PasswordGenerator();
+
+                /*
+                GenerateRandomString(int minLength, int maxLength, int minLCaseCount, int minUCaseCount, int minNumCount, int minSpecialCount
+                 */
+                newPassword = pg.GenerateRandomString(8,15,1,1,1,1);
+                String pass = newPassword;
+                if(uName.equals("") || aName.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Field Empty", Toast.LENGTH_SHORT).show();
+                }else {
+                    callCreate(uName, aName, pass, v);
+                    Toast.makeText(getApplicationContext(), "Created User", Toast.LENGTH_SHORT).show();
+                }
+               // Intent myIntent = new Intent(v.getContext(), Admin.class);
+                //startActivityForResult(myIntent, 0);
+                //finish();
 
 
 
             }
         });
 
-
+/*
         // Spinner element
-        Spinner spinner = (Spinner) findViewById(R.id.Security);
+       Spinner spinner = (Spinner) findViewById(R.id.Security);
 
-        // Spinner click listener
+         Spinner click listener
         spinner.setOnItemSelectedListener(this);
 
         // Spinner Drop down elements
         List<String> questions = new ArrayList<String>();
-        questions.add("What university did you attend?");
+      //  questions.add("What university did you attend?");
 
 
         // Creating adapter for spinner
@@ -87,6 +99,7 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
 
         // attaching data adapter to spinner
         spinner.setAdapter(dataAdapter);
+*/
     }
 
     @Override
@@ -183,22 +196,26 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
                 loadingDiag.dismiss();
                 String r = result.trim();
                 Log.v("result: ", r);
-/*                if(r.equals("success")){
-                    if(uname.equals("admin")){
-                        Intent myIntent = new Intent(view.getContext(), Admin.class);
+                TextView newPasswordView = (TextView) findViewById(R.id.newPassGen);
+                TextView PasswordTagView = (TextView) findViewById(R.id.passTag);
+                Button bOK = (Button) findViewById(R.id.bOK);
+
+                PasswordTagView.setVisibility(TextView.VISIBLE);
+                newPasswordView.setText(newPassword);
+                newPasswordView.setVisibility(TextView.VISIBLE);
+
+                bOK.setVisibility(Button.VISIBLE);
+
+                bOK.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent myIntent = new Intent(v.getContext(), Admin.class);
                         startActivityForResult(myIntent, 0);
                         finish();
                     }
-                    else {
-                        Intent myIntent = new Intent(view.getContext(), Messaging.class);
-                        startActivityForResult(myIntent, 0);
-                        finish();
-                    }
-                }else if (r.equals("failure")) {
-                    Toast.makeText(getApplicationContext(), "incorrect username/password", Toast.LENGTH_SHORT).show();
-                }else {
-                    Log.v("Result Error", result);
-                }*/
+                });
             }
 
         }

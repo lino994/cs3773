@@ -18,8 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="Admin" />
-        <activity android:name="Create"/>
+        <activity android:name=".Admin" />
+        <activity android:name=".Create" />
         <activity android:name=".Messaging" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -31,7 +31,8 @@
 
         <activity android:name=".ForgotPassword" />
         <activity android:name=".AnswerQuestion" />
-        <activity android:name=".ResetPassword"></activity>
+        <activity android:name=".ResetPassword" />
+        <activity android:name=".SetSecQuestion"></activity>
     </application>
 
 </manifest>

@@ -71,8 +71,11 @@ public class MainActivity extends AppCompatActivity {
     public void Login(View view) {
         uname=medit.getText().toString();
         pass=epass.getText().toString();
-
-        callLogin(uname, pass, view);
+        if(uname.equals("") || pass.equals("")){
+            Toast.makeText(getApplicationContext(), "Field Empty", Toast.LENGTH_SHORT).show();
+        }else{
+            callLogin(uname, pass, view);
+        }
     }
 
     public void callLogin(final String uname, String pass, final View view){
@@ -141,11 +144,13 @@ public class MainActivity extends AppCompatActivity {
                 if(r.equals("success")){
                     if(uname.equals("admin")){
                         Intent myIntent = new Intent(view.getContext(), Admin.class);
+                        myIntent.putExtra("uname",uname);
                         startActivityForResult(myIntent, 0);
                         finish();
                     }
                     else {
                         Intent myIntent = new Intent(view.getContext(), Messaging.class);
+                        myIntent.putExtra("uname",uname);
                         startActivityForResult(myIntent, 0);
                         finish();
                     }

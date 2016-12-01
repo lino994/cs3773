@@ -43,12 +43,15 @@ public class ResetPassword extends AppCompatActivity {
             {
                 String pass1 = edPass1.getText().toString();
                 String pass2 = edPass2.getText().toString();
+                PasswordChecker pCheck = new PasswordChecker();
                 Log.v("pass1", pass1);
                 Log.v("pass2", pass2);
 
                 if(!pass1.equals(pass2)){
                     Toast.makeText(getApplicationContext(), "Passwords Do Not Match", Toast.LENGTH_SHORT).show();
-                }else {
+                }else if(pass1.equals(pass2) && !pCheck.isValidPassword(pass1)) {
+                    Toast.makeText(getApplicationContext(), "Invalid Password Type", Toast.LENGTH_SHORT).show();
+                }else if(pass1.equals(pass2) && pCheck.isValidPassword(pass1)){
                     String pass = pass1;
                     initSubmit(pass, v, uname);
                 }
@@ -122,6 +125,7 @@ public class ResetPassword extends AppCompatActivity {
                 Log.v("result: ", r);
                 Intent backToMain = new Intent(v.getContext(), MainActivity.class);
                 startActivity(backToMain);
+                finish();
             }
 
         }

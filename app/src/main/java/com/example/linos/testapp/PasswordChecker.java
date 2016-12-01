@@ -1,0 +1,47 @@
+package com.example.linos.testapp;
+
+/**
+ * Created by linos on 11/30/2016.
+ */
+
+public class PasswordChecker {
+    public boolean isValidPassword(String password) {
+        final String lowerChars = "qwertyuiopasdfghjklzxcvbnm";
+        final String upperChars = "QWERTYUIOPASDFGHJKLZXCVBNM";
+        final String digits = "0123456789";
+        final String specials = "!@#$%^&*? ";
+        boolean hasLower = false;
+        boolean hasUpper = false;
+        boolean hasDigit = false;
+        boolean hasSpecial = false;
+
+
+        if(password.length() > 15 || password.length() < 8) {
+            return false;
+        }
+
+        for(int i = 0; i < password.length(); i++) {
+
+            String currentSymbol = password.charAt(i) + "";
+            if(lowerChars.contains(currentSymbol)) {
+                hasLower = true;
+            }
+
+            if(upperChars.contains(currentSymbol)) {
+                hasUpper = true;
+            }
+
+            if(digits.contains(currentSymbol)) {
+                hasDigit = true;
+            }
+
+            if(specials.contains(currentSymbol)) {
+                hasSpecial = true;
+            }
+        }
+
+        if(!hasLower || !hasUpper || !hasDigit || !hasSpecial) {
+            return false;
+        } else return true;
+    }
+}

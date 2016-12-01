@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1">
-
-    <Spinner
+<!--
+   <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/Security"
         android:layout_weight="0.03" />
-
+-->
     <TextView
         android:text="Enter Name"
         android:layout_width="match_parent"
@@ -18,10 +18,42 @@
         android:id="@+id/actualname"
         android:layout_weight="0.03"
         tools:text="Enter Name" />
-    <EditText
-        android:id="@+id/edActualname"
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text = "                            PASSWORD:"
+        android:textSize="20dp"
+        android:id="@+id/passTag"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40dp"
+        android:gravity="center_horizontal"
+        android:text=""
+        android:id="@+id/newPassGen"
+        android:layout_marginRight="53dp"
+        android:layout_marginEnd="53dp"
+        android:layout_below="@+id/passTag"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible"/>
+<!--
+    <TextView
+        android:text="Security Question Answer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:id="@+id/textView4"
+        android:layout_weight="0.04"
+        tools:text="Security Question Answer"
+        android:layout_above="@+id/edAnswer"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="17dp" />
+-->
 
     <TextView
         android:text="Enter User Name"
@@ -29,25 +61,39 @@
         android:layout_height="wrap_content"
         android:id="@+id/username"
         android:layout_weight="0.03"
-        tools:text="Enter User Name" />
+        tools:text="Enter User Name"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/edActualname"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/edUsername"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:text="Security Question Answer"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView4"
-        android:layout_weight="0.04"
-        tools:text="Security Question Answer" />
-
+        android:layout_below="@+id/username"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+<!--
     <EditText
         android:id="@+id/edAnswer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/createnew"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="13dp" />
+-->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text = "OK"
+        android:visibility="invisible"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="75dp"
+        android:id="@+id/bOK" />
 
     <Button
         android:text="Create"
@@ -55,5 +101,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/createnew"
         android:onClick="CreateNew"
-        android:layout_weight="0.03" />
-</LinearLayout>
+        android:layout_weight="0.03"
+        android:layout_below="@+id/edUsername"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="17dp" />
+
+    <EditText
+        android:id="@+id/edActualname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/actualname"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>
