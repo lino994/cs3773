@@ -111,6 +111,13 @@ public class MainActivity extends AppCompatActivity {
                 String uname = params[1];
                 String pass = params[2];
 
+
+                String count = pref.getString(uname+COUNT, "0");
+                logCounter = Integer.parseInt(count);
+
+                String l = pref.getString(uname+TIME, "0");
+                time = System.currentTimeMillis() - Long.parseLong(l);
+
                 try{
                     /******************TEST USERS****************************
                         Username : UserOne
@@ -120,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
                         Password : p@ss2
 
                      ****************************************************/
+                    if ((logCounter > 4) && (time < 30000)) {
+                        return "failure\n";
+                    }
+                    else {
                     String data = URLEncoder.encode("uname", "UTF-8")
                             + "=" + URLEncoder.encode(uname, "UTF-8");
                     data += "&" + URLEncoder.encode("pass", "UTF-8")
@@ -142,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                         sb.append(line + "\n");
                     }
                         Log.v("string :", sb.toString());
-                        return sb.toString();
+                        return sb.toString(); }
 
                 }catch(Exception e){
                     Log.v("Conn Error  :", e.getMessage());
@@ -175,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.putString(uname+TIME, Long.toString(currentTime));
                     editor.commit();
 
-                    if ((logCounter > 2) && (time < 30000)) {
+                    if ((logCounter > 4) && (time < 30000)) {
 
                         Toast.makeText(getApplicationContext(), "Maximum attempted reached!\nTry again in 30s", Toast.LENGTH_SHORT).show();
                     }
