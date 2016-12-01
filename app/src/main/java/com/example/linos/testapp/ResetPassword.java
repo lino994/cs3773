@@ -59,6 +59,25 @@ public class ResetPassword extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed(){
+
+        if(uname.equals("admin")){
+            Intent myIntent = new Intent(ResetPassword.this, Admin.class);
+            myIntent.putExtra("uname",uname);
+            startActivityForResult(myIntent, 0);
+            finish();
+        }
+        else{
+            Intent myIntent = new Intent(ResetPassword.this, Messaging.class);
+            myIntent.putExtra("uname",uname);
+            startActivityForResult(myIntent, 0);
+            finish();
+        }
+
+
+    }
+
 
     public void initSubmit(final String pass, final View v, final String uname) {
         class QuestionASync extends AsyncTask<String, Void, String> {

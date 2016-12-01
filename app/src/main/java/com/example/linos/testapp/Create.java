@@ -212,6 +212,7 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
                     public void onClick(View v)
                     {
                         Intent myIntent = new Intent(v.getContext(), Admin.class);
+                        myIntent.putExtra("uname",uName);
                         startActivityForResult(myIntent, 0);
                         finish();
                     }
