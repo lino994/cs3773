@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                         Password : p@ss2
 
                      ****************************************************/
-                    if ((logCounter > 4) && (time < 30000)) {
+                    if ((logCounter >= 4) && (time < 30000)) {
                         return "failure\n";
                     }
                     else {
@@ -166,6 +166,12 @@ public class MainActivity extends AppCompatActivity {
                 String r = result.trim();
                 Log.v("result: ", r);
                 if(r.equals("success")){
+
+                    editor.putString(uname+COUNT, "0");
+                    long currentTime = System.currentTimeMillis();
+                    editor.putString(uname+TIME, Long.toString(currentTime));
+                    editor.commit();
+
                     if(uname.equals("admin")){
                         Intent myIntent = new Intent(view.getContext(), Admin.class);
                         myIntent.putExtra("uname",uname);
