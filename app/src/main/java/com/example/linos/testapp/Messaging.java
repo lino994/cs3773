@@ -74,6 +74,8 @@ public class Messaging extends Activity implements OnItemSelectedListener{
             Intent ChangePassIn = new Intent(view.getContext(), ResetPassword.class);
             ChangePassIn.putExtra("uname",uname);
             startActivityForResult(ChangePassIn, 0);
+            finish();
+
 
         }else if(item.equals("Set Security Question")) {
             Intent setQuest = new Intent(view.getContext(), SetSecQuestion.class);

@@ -24,7 +24,8 @@ public class Admin extends Activity implements AdapterView.OnItemSelectedListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message);
-
+        Intent ResetIntent  = getIntent();
+        uname = ResetIntent.getExtras().getString("uname");
         bLogout = (Button) findViewById(R.id.bLogout);
         bLogout.setOnClickListener(new View.OnClickListener()
         {
@@ -80,6 +81,8 @@ public class Admin extends Activity implements AdapterView.OnItemSelectedListene
                 Intent changePass = new Intent(view.getContext(), ResetPassword.class);
                 changePass.putExtra("uname",uname);
                 startActivity(changePass);
+                finish();
+
             }else if(item.equals("Set Security Question")){
                 Intent setQuest = new Intent(view.getContext(), SetSecQuestion.class);
                 setQuest.putExtra("uname",uname);
