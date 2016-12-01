@@ -113,10 +113,19 @@ public class MainActivity extends AppCompatActivity {
 
 
                 String count = pref.getString(uname+COUNT, "0");
+                Log.v("logCount", count);
                 logCounter = Integer.parseInt(count);
 
                 String l = pref.getString(uname+TIME, "0");
                 time = System.currentTimeMillis() - Long.parseLong(l);
+
+                if (time > 30000) {
+                    editor.putString(uname+COUNT, "0");
+                    logCounter = 0;
+                    long currentTime = System.currentTimeMillis();
+                    editor.putString(uname+TIME, Long.toString(currentTime));
+                    editor.commit();
+                }
 
                 try{
                     /******************TEST USERS****************************
@@ -127,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
                         Password : p@ss2
 
                      ****************************************************/
-                    if ((logCounter >= 4) && (time < 30000)) {
+
+                    if ((logCounter > 2) && (time < 30000)) {
                         return "failure\n";
                     }
                     else {
@@ -164,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(String result) {
                 loadingDiag.dismiss();
                 String r = result.trim();
-                Log.v("result: ", r);
+                //Log.v("result: ", r);
                 if(r.equals("success")){
 
                     editor.putString(uname+COUNT, "0");
@@ -192,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.putString(uname+TIME, Long.toString(currentTime));
                     editor.commit();
 
-                    if ((logCounter > 4) && (time < 30000)) {
+                    if ((logCounter > 2) && (time < 30000)) {
 
                         Toast.makeText(getApplicationContext(), "Maximum attempted reached!\nTry again in 30s", Toast.LENGTH_SHORT).show();
                     }
