@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.nique.myapplication.MainActivity">
+    <item
+        android:id="@+id/password"
+        android:orderInCategory="100"
+        android:title="Change Password"
+        app:showAsAction="never" />
+    <item android:title="Set Security Question"
+        android:id="@+id/security" />
+    <item android:title="Encryption by Key"
+        android:id="@+id/encryption" />
+    <item android:title="Encryption by Pattern"
+        android:id="@+id/pattern" />
+    <item android:title="Create New User"
+        android:id="@+id/new_user" />
+</menu>

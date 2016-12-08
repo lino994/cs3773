@@ -53,7 +53,7 @@ public class Admin extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.admin_menu, menu);
         return true;
     }
     @Override
@@ -73,6 +73,14 @@ public class Admin extends AppCompatActivity {
                 setQuest.putExtra("uname",uname);
                 startActivity(setQuest);
                 Log.v("Selected","security");
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                return true;
+            case R.id.new_user:
+                Intent newUser = new Intent(this, Create.class);
+                newUser.putExtra("uname",uname);
+                startActivity(newUser);
+                Log.v("Selected","Create new user");
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
