@@ -20,6 +20,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/*
+ * Admin Class only accesible with admin username and password
+ *
+ * Testing:
+ *      - Username : admin
+ *      - Password : admin
+ */
 public class Admin extends AppCompatActivity {
     private int count;
     Button bLogout;
@@ -57,6 +65,7 @@ public class Admin extends AppCompatActivity {
         return true;
     }
     @Override
+    
     public boolean onOptionsItemSelected(MenuItem item) {
         //this.findViewById(android.R.id.message);
         switch (item.getItemId()) {
