@@ -24,18 +24,34 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+/*
+    for some reason choosing the
+    mother's maiden name question does not
+    add it to the security table...
+
+    Other 2 Questions seem to work fine
+ */
 public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    /*link of php file to be used*/
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/setQuestion.php";
-    String secQuestion;
-    String secAnswer;
-    String uname;
-    EditText edAnswer;
-    Button bSubmit;
-    int count;
+
+    /* variables to be used */
+    String secQuestion;     //hold security Question Chosen
+    String secAnswer;       //hold security Answer Chosen
+    String uname;           //will hold username (passed by calling activity)
+    EditText edAnswer;      //will hold user's inputted EditText
+    Button bSubmit;         //button to submit into table
+    int count;              // count of (?)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_sec_question);
+
+        /* grab info from the user's input to be set in Security Table */
         Intent thisIntent = getIntent();
 
         uname = thisIntent.getExtras().getString("uname");
