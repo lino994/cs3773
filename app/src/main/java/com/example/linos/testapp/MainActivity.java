@@ -174,8 +174,21 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(String result) {
                 loadingDiag.dismiss();
                 String r = result.trim();
-                //Log.v("result: ", r);
-                if(r.equals("success")){
+
+
+                Log.v("result: ", r);
+                if(r.equals("firstTimeSuccess")){
+                    editor.putString(uname+COUNT, "0");
+                    long currentTime = System.currentTimeMillis();
+                    editor.putString(uname+TIME, Long.toString(currentTime));
+                    editor.commit();
+
+                    Intent myIntent = new Intent(view.getContext(), SetSecQuestion.class);
+                    myIntent.putExtra("uname",uname);
+                    startActivityForResult(myIntent, 0);
+                    finish();
+
+                } else if(r.equals("success")){
 
                     editor.putString(uname+COUNT, "0");
                     long currentTime = System.currentTimeMillis();
