@@ -75,6 +75,9 @@ public class Messaging extends AppCompatActivity{
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
+            case R.id.pattern:
+                Intent PatternEncrypt = new Intent(this, PatternEncrypt.class);
+                startActivity(PatternEncrypt);
 
             default:
                 // If we got here, the user's action was not recognized.
