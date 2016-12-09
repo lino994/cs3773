@@ -22,6 +22,7 @@
         <activity android:name=".Admin" />
         <activity android:name=".Create" />
         <activity android:name=".Messaging" />
+        <activity android:name=".SendMessage" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
