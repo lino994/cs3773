@@ -13,4 +13,6 @@ tools:context="com.example.nique.myapplication.MainActivity">
         android:id="@+id/encryption" />
     <item android:title="Encryption by Pattern"
         android:id="@+id/pattern" />
+    <item android:title="Logout"
+        android:id="@+id/Logout" />
 </menu>
