@@ -132,8 +132,21 @@ public class Messaging extends AppCompatActivity{
                     }
 
                     ArrayAdapter adapter = new ArrayAdapter(Messaging.this, R.layout.adaptor_text_layout, contactList);
-                    ListView listView = (ListView) findViewById(R.id.contactList);
+                    final ListView listView = (ListView) findViewById(R.id.contactList);
                     listView.setAdapter(adapter);
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView<?> parent, View view,int position, long id)
+                        {
+                            String selectedFromList =(listView.getItemAtPosition(position).toString());
+                            Log.v("Selected",selectedFromList);
+                            Bundle info = new Bundle();
+                            info.putString("uname",uname);
+                            info.putString("reciever",selectedFromList);
+                            Intent newMessage = new Intent(Messaging.this, SendMessage.class);
+                            newMessage.putExtras(info);
+                            startActivity(newMessage);
+                            finish();
+                        }});
 
                 }
             }
