@@ -15,4 +15,6 @@
         android:id="@+id/pattern" />
     <item android:title="Create New User"
         android:id="@+id/new_user" />
+    <item android:title="Logout"
+        android:id="@+id/Logout" />
 </menu>
