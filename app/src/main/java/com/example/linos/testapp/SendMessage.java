@@ -29,13 +29,16 @@ public class SendMessage extends AppCompatActivity{
     EditText edMessage;
     EditText edPass2;
     String uname;
+    String sender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_message);
         Intent ResetIntent  = getIntent();
-        uname = ResetIntent.getExtras().getString("uname");
+        Bundle info = ResetIntent.getExtras();
+        sender = info.getString("uname");
+        uname = info.getString("reciever");
         edMessage = (EditText) findViewById(R.id.edMessage);
         bSubmit = (Button) findViewById(R.id.send);
 
@@ -44,7 +47,7 @@ public class SendMessage extends AppCompatActivity{
             @Override
             public void onClick(View v)
             {
-                String message = "Sent from user: " + uname +"\n"+ edMessage.getText().toString();
+                String message = "Sent from user: " + sender +"\n"+ edMessage.getText().toString();
                 Log.v("Message: ", message);
                 initSubmit(v, uname, message);
 
@@ -55,15 +58,15 @@ public class SendMessage extends AppCompatActivity{
     @Override
     public void onBackPressed(){
 
-        if(uname.equals("admin")){
+        if(sender.equals("admin")){
             Intent myIntent = new Intent(this, Admin.class);
-            myIntent.putExtra("uname",uname);
+            myIntent.putExtra("uname",sender);
             startActivityForResult(myIntent, 0);
             finish();
         }
         else{
             Intent myIntent = new Intent(this, Messaging.class);
-            myIntent.putExtra("uname",uname);
+            myIntent.putExtra("uname",sender);
             startActivityForResult(myIntent, 0);
             finish();
         }
@@ -135,15 +138,15 @@ public class SendMessage extends AppCompatActivity{
                 loadingDiag.dismiss();
                 String r = result.trim();
                 Log.v("result: ", r);
-                if (uname.equals("admin")) {
+                if (sender.equals("admin")) {
                     Intent myIntent = new Intent(SendMessage.this, Admin.class);
-                    myIntent.putExtra("uname",uname);
+                    myIntent.putExtra("uname",sender);
                     startActivityForResult(myIntent, 0);
                     finish();
                 }
                 else {
                     Intent myIntent = new Intent(SendMessage.this, Messaging.class);
-                    myIntent.putExtra("uname",uname);
+                    myIntent.putExtra("uname",sender);
                     startActivityForResult(myIntent, 0);
                     finish();
                 }

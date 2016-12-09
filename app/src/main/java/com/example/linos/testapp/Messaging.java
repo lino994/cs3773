@@ -53,7 +53,7 @@ public class Messaging extends AppCompatActivity{
 
 
     /* retrieve contacts from server */
-    public void InitContacts(String LINK, String uname){
+    public void InitContacts(String LINK, final String uname){
             class QuestionASync extends AsyncTask<String, Void, String> {
 
                 private Dialog loadingDiag;
@@ -118,8 +118,22 @@ public class Messaging extends AppCompatActivity{
                     }
 
                     ArrayAdapter adapter = new ArrayAdapter(Messaging.this, R.layout.adaptor_text_layout, contactList);
-                    ListView listView = (ListView) findViewById(R.id.contactList);
+                    final ListView listView = (ListView) findViewById(R.id.contactList);
                     listView.setAdapter(adapter);
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView<?> parent, View view,int position, long id)
+                        {
+                            String selectedFromList =(listView.getItemAtPosition(position).toString());
+                            Log.v("Selected",selectedFromList);
+                            Bundle info = new Bundle();
+                            info.putString("uname",uname);
+                            info.putString("reciever",selectedFromList);
+                            Intent newMessage = new Intent(Messaging.this, SendMessage.class);
+                            newMessage.putExtras(info);
+                            startActivity(newMessage);
+                            finish();
+                        }});
+
 
                 }
             }
