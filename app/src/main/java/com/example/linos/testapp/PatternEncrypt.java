@@ -9,6 +9,10 @@ import android.view.View;
 import android.widget.*;
 
 import android.widget.*;
+
+/**
+ * Sets Pattern Encryption
+ */
 public class PatternEncrypt extends AppCompatActivity implements View.OnClickListener{
     String code ="";
     @Override

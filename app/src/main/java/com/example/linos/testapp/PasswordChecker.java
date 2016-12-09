@@ -1,7 +1,13 @@
 package com.example.linos.testapp;
 
 /**
- * Created by linos on 11/30/2016.
+ * Checks that the password the user created
+ * is valid it has to contain:
+ *     - 8 to 10 Characters
+ *     - One UpperCase
+ *     - One LowerCase
+ *     - One Special Char
+ *     - One Number
  */
 
 public class PasswordChecker {

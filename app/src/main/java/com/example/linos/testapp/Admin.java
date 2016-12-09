@@ -17,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 
@@ -41,29 +40,38 @@ import java.util.List;
  *      - Username : admin
  *      - Password : admin
  */
+
+/**Admin Class:
+ * Uses Messaging Layout but gives extra options to System Admin
+ */
 public class Admin extends AppCompatActivity {
+
+    //link to access database
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getContacts.php";
     private int count;
     Button bLogout;
     String uname;
     @Override
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message);
 
+            //initalize the options button
         Toolbar myToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.options);
         setSupportActionBar(myToolbar);
 
+            // grab username of (admin) passed on by previous Intent
         Intent myIn = getIntent();
         uname = myIn.getExtras().getString("uname");
 
+            //function that connects to database to get contact information
         InitContacts(LINK, uname);
-
     }
 
     /* retrieve contacts from server */
     public void InitContacts(String LINK, String uname){
-        class QuestionASync extends AsyncTask<String, Void, String> {
+        class ContactASync extends AsyncTask<String, Void, String> {
 
             private Dialog loadingDiag;
             @Override
@@ -73,52 +81,61 @@ public class Admin extends AppCompatActivity {
             }
 
             @Override
+            /*main processing from database*/
             protected String doInBackground(String... params) {
                 String uri = params[0];
                 String uname = params[1];
 
                 try{
 
-                    //data to be sent
-                    String data = URLEncoder.encode("uname", "UTF-8")
-                            + "=" + URLEncoder.encode(uname, "UTF-8");
-                    //Log.v("user: ", uname
 
+                    String data = URLEncoder.encode("uname", "UTF-8")           // data to be sent to php file in
+                            + "=" + URLEncoder.encode(uname, "UTF-8");          // server to retrieve info from database
+
+
+                    /*open connection to link*/
                     URL url = new URL(uri);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+                    /*set up writer to php file */
                     connection.setDoOutput(true);
                     OutputStreamWriter osWrite = new OutputStreamWriter(connection.getOutputStream());
                     osWrite.write(data);
                     osWrite.flush();
 
+                    /*set up buffered reader to recieve output from php file */
                     BufferedReader bReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
                     StringBuilder sb = new StringBuilder();
                     String line = null;
 
                     while((line = bReader.readLine()) != null) {
-                        Log.v("line: ", line);
+                        Log.v("line from admin: ", line);
                         sb.append(line + "\n");
                     }
-                    Log.v("string :", sb.toString());
+                    Log.v("string from admin :", sb.toString());
                     return sb.toString();
 
-                }catch(Exception e){
+                }catch(Exception e){  //connection error
                     Log.v("Conn Error  :", e.getMessage());
                     return new String ("Exception: " + e.getMessage());
                 }
             }
+
+            /*after php file has been accessed and executed*/
             @Override
             protected void onPostExecute(String result) {
-                loadingDiag.dismiss();
-                ArrayList<String> contactList = new ArrayList<String>();
+
+                loadingDiag.dismiss();                                     //dismiss loading signal
+                ArrayList<String> contactList = new ArrayList<String>();   //ArrayList to hold contact information
                 Log.v("resultFromJSON:",result);
+
+
                 try {
-                    JSONArray jsonResult = new JSONArray(result);
+                    JSONArray jsonResult = new JSONArray(result);           //turn result string into JSONArray
                     for(int i = 0; i < jsonResult.length(); i++){
-                        JSONObject jsonObj = jsonResult.getJSONObject(i);
-                        contactList.add(jsonObj.getString("user"));
+                        JSONObject jsonObj = jsonResult.getJSONObject(i);   //turn each item in array in JSONObject
+                        contactList.add(jsonObj.getString("user"));         //turn to obj to string and add to ArrayList
                     }
                     Log.v("after List set",contactList.toString());
 
@@ -126,14 +143,17 @@ public class Admin extends AppCompatActivity {
                     Log.v("Error JSON Decoding:", e.getMessage());
                 }
 
+                /* Set Up List View */
                 ArrayAdapter adapter = new ArrayAdapter(Admin.this, R.layout.adaptor_text_layout, contactList);
                 ListView listView = (ListView) findViewById(R.id.contactList);
                 listView.setAdapter(adapter);
 
             }
         }
-        QuestionASync qas = new QuestionASync();
-        qas.execute(LINK , uname);
+
+        /*execute ContactASync */
+        ContactASync cas = new ContactASync();
+        cas.execute(LINK , uname);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

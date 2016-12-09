@@ -29,20 +29,26 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-
+/**
+ * Main Login Activity here the user can input
+ * their username and password
+ * or choose that they forget their password
+ */
 public class MainActivity extends AppCompatActivity {
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/testConnect.php";
-    private static final String COUNT = "LogCount";
-    private static final String TIME = "Time";
+    private static final String COUNT = "LogCount";     //used for lockout
+    private static final String TIME = "Time";          //used for lockout
 
-    Button bForgot;
-    EditText medit;
-    EditText epass;
-    String uname;
-    String pass;
+    Button bForgot;         // forgot button password
+    EditText medit;         // where username is entered
+    EditText epass;         // where password is entered
+    String uname;           // where username will be stored
+    String pass;            // where password will be stored
 
+    /*init values for lockout */
     int logCounter = 0;
     long time = 0;
+    int MAXTIME = 30000;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     /**
@@ -57,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         medit = (EditText) findViewById(R.id.edUsername);
         epass = (EditText) findViewById(R.id.edPassword);
         bForgot = (Button) findViewById(R.id.bForgot) ;
@@ -69,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(v.getContext(), ForgotPassword.class);
-                startActivity(intent);
+                Intent forgotIntent = new Intent(v.getContext(), ForgotPassword.class);
+                startActivity(forgotIntent);
             }
         });
 
@@ -80,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-
+/* used if used presses login */
     public void Login(View view) {
         uname=medit.getText().toString();
         pass=epass.getText().toString();
@@ -90,14 +97,13 @@ public class MainActivity extends AppCompatActivity {
             callLogin(uname, pass, view);
         }
     }
-
+/**
+ * main func that uses an ASync class to connect to the server
+ * and check if user inputted the correct information
+ */
     public void callLogin(final String uname, String pass, final View view){
         class LoginASync extends AsyncTask <String, Void, String>{
-            //uname=medit.getText().toString();
-            //String pass=epass.getText().toString();
 
-            //Log.v("Username",uname);
-            //Log.v("Password",pass);
             private Dialog loadingDiag;
             @Override
             protected void onPreExecute() {
@@ -130,40 +136,39 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     /******************TEST USERS****************************
                         Username : UserOne
-                        Password : p@ss1
-
-                        Username : UserTwo
-                        Password : p@ss2
-
+                        Password : P@55word!
                      ****************************************************/
 
-                    if ((logCounter > 2) && (time < 30000)) {
+                    //if user has tried 3 times to login and fails he is locked out for a certain amount of time
+                    if ((logCounter > 2) && (time < MAXTIME)) {
                         return "failure\n";
-                    }
-                    else {
-                    String data = URLEncoder.encode("uname", "UTF-8")
-                            + "=" + URLEncoder.encode(uname, "UTF-8");
-                    data += "&" + URLEncoder.encode("pass", "UTF-8")
-                            + "=" + URLEncoder.encode(pass, "UTF-8");
-                    URL url = new URL(uri);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-                    connection.setDoOutput(true);
-                    OutputStreamWriter osWrite = new OutputStreamWriter(connection.getOutputStream());
-                    osWrite.write(data);
-                    osWrite.flush();
+                    } else {
+                        String data = URLEncoder.encode("uname", "UTF-8")
+                                + "=" + URLEncoder.encode(uname, "UTF-8");
+                        data += "&" + URLEncoder.encode("pass", "UTF-8")
+                                + "=" + URLEncoder.encode(pass, "UTF-8");
+                        URL url = new URL(uri);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-                    BufferedReader bReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        connection.setDoOutput(true);
+                        OutputStreamWriter osWrite = new OutputStreamWriter(connection.getOutputStream());
+                        osWrite.write(data);
+                        osWrite.flush();
 
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
+                        BufferedReader bReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                    while((line = bReader.readLine()) != null) {
-                        Log.v("line: ", line);
-                        sb.append(line + "\n");
-                    }
+                        StringBuilder sb = new StringBuilder();
+                        String line = null;
+
+                        while((line = bReader.readLine()) != null) {
+                            Log.v("line: ", line);
+                            sb.append(line + "\n");
+                        }
+
                         Log.v("string :", sb.toString());
-                        return sb.toString(); }
+                        return sb.toString();
+                    }
 
                 }catch(Exception e){
                     Log.v("Conn Error  :", e.getMessage());
@@ -177,6 +182,12 @@ public class MainActivity extends AppCompatActivity {
 
 
                 Log.v("result: ", r);
+                /**
+                 * different login scenarios:
+                 *          - firstTimeSuccess : user logs in for first time is sent to set Security Password
+                 *          - Success          : user is sent to main messaging/contact activity
+                 *          - failure          : messsage is displayed saying password is incorrect counter of tries is increased
+                 * */
                 if(r.equals("firstTimeSuccess")){
                     editor.putString(uname+COUNT, "0");
                     long currentTime = System.currentTimeMillis();
@@ -228,7 +239,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-
+        /**
+         * execute login async to connect to database
+         */
         LoginASync las = new LoginASync();
         las.execute(LINK ,uname, pass);
     }

@@ -28,78 +28,57 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Activity to create new user
+ * only available to System Admin
+ */
 public class Create extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+        //link to php file to update database
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/setNewUser.php";
-    private GoogleApiClient client;
     private int count;
-    Button createNew;
-    EditText edaname;
-    EditText eduname;
-    EditText edanswer;
-    String uName;
-    String sQuestion;
-    String aName;
-    String sAnswer;
-    String newPassword;
+    Button bCreateNew;       // button tosubmit and create new user
+    EditText edaname;       // where name will be inputted
+    EditText eduname;       // where username will be inputted
+    String uName;           // username will be stored
+    String aName;           // actual name will be stored
+    String newPassword;     // where RNG Password will be stored
+
+    /*when activity starts*/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_user);
+
+        /**
+         * initalize variables to be used
+         */
         edaname = (EditText) findViewById(R.id.edActualname);
         eduname = (EditText) findViewById(R.id.edUsername);
-        edanswer = (EditText) findViewById(R.id.edAnswer);
-        createNew = (Button) findViewById(R.id.createnew);
-        createNew.setOnClickListener(new View.OnClickListener() {
+        bCreateNew = (Button) findViewById(R.id.createnew);
+        bCreateNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 aName = edaname.getText().toString();
                 uName=eduname.getText().toString();
-               // sAnswer=edanswer.getText().toString();
-                String quest = "what";
-                PasswordGenerator pg = new PasswordGenerator();
+                PasswordGenerator pg = new PasswordGenerator();         //new password generator
 
-                /*
-                GenerateRandomString(int minLength, int maxLength, int minLCaseCount, int minUCaseCount, int minNumCount, int minSpecialCount
-                 */
-                newPassword = pg.GenerateRandomString(8,15,1,1,1,1);
+                newPassword = pg.GenerateRandomString(8,15,1,1,1,1); // generate new password and set it to newPassword
                 String pass = newPassword;
+
+                /**
+                 * check if any or the fields are empty to prevent
+                 * null values being inputed to server table
+                 */
                 if(uName.equals("") || aName.equals("")) {
                     Toast.makeText(getApplicationContext(), "Field Empty", Toast.LENGTH_SHORT).show();
                 }else {
                     callCreate(uName, aName, pass, v);
                     Toast.makeText(getApplicationContext(), "Created User", Toast.LENGTH_SHORT).show();
                 }
-               // Intent myIntent = new Intent(v.getContext(), Admin.class);
-                //startActivityForResult(myIntent, 0);
-                //finish();
-
-
 
             }
         });
-
-/*
-        // Spinner element
-       Spinner spinner = (Spinner) findViewById(R.id.Security);
-
-         Spinner click listener
-        spinner.setOnItemSelectedListener(this);
-
-        // Spinner Drop down elements
-        List<String> questions = new ArrayList<String>();
-      //  questions.add("What university did you attend?");
-
-
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, questions);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        spinner.setAdapter(dataAdapter);
-*/
     }
 
     @Override
@@ -121,10 +100,18 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
         // TODO Auto-generated method stub
     }
 
+
+    /**
+     * Main function that connects to database to input a new user into
+     * the userTable in the database by creating and executing createASync class
+     *
+     * @param uname     - username
+     * @param aname     - full name
+     * @param pass      - password
+     * @param view      - view
+     */
     public void callCreate(final String uname,final String aname,final String pass, final View view){
         class createASync extends AsyncTask<String, Void, String> {
-            //uname=medit.getText().toString();
-            //String pass=epass.getText().toString();
 
             //Log.v("Username",uname);
             //Log.v("Password",pass);
@@ -143,14 +130,6 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
                 String password = params[2];
 
                 try{
-                    /******************TEST USERS****************************
-                     Username : UserOne
-                     Password : p@ss1
-
-                     Username : UserTwo
-                     Password : p@ss2
-
-                     ****************************************************/
                     Log.v("encode","en");
                     String data = URLEncoder.encode("uname", "UTF-8")
                             + "=" + URLEncoder.encode(uname, "UTF-8");
@@ -158,11 +137,8 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
                             + "=" + URLEncoder.encode(password, "UTF-8");
                     data += "&" + URLEncoder.encode("aname", "UTF-8")
                             + "=" + URLEncoder.encode(aname, "UTF-8");
-/*                    data += "&" + URLEncoder.encode("sQuestion", "UTF-8")
-                            + "=" + URLEncoder.encode(sQuestion, "UTF-8");
-                    data += "&" + URLEncoder.encode("sAnswer", "UTF-8")
-                            + "=" + URLEncoder.encode(sAnswer, "UTF-8");
-*/                    Log.v("encode","en");
+
+                    //Log.v("encode","en");
 
                     URL url = new URL(uri);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -180,10 +156,10 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
                     String line = null;
 
                     while((line = bReader.readLine()) != null) {
-                        Log.v("line: ", line);
+                       // Log.v("line: ", line);
                         sb.append(line + "\n");
                     }
-                    Log.v("string :", sb.toString());
+                    Log.v("string from create:", sb.toString());
                     return sb.toString();
 
                 }catch(Exception e){
@@ -196,6 +172,8 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
                 loadingDiag.dismiss();
                 String r = result.trim();
                 Log.v("result: ", r);
+
+                /*Displays New Password to be given to the user to login for teh first time */
                 TextView newPasswordView = (TextView) findViewById(R.id.newPassGen);
                 TextView PasswordTagView = (TextView) findViewById(R.id.passTag);
                 Button bOK = (Button) findViewById(R.id.bOK);
@@ -203,7 +181,9 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
                 PasswordTagView.setVisibility(TextView.VISIBLE);
                 newPasswordView.setText(newPassword);
                 newPasswordView.setVisibility(TextView.VISIBLE);
-
+                /* When OK Button is pressed
+                 * app goes back to main page for admin
+                */
                 bOK.setVisibility(Button.VISIBLE);
 
                 bOK.setOnClickListener(new View.OnClickListener()
@@ -221,7 +201,8 @@ public class Create extends AppCompatActivity implements AdapterView.OnItemSelec
 
         }
 
-        createASync las = new createASync();
-        las.execute(LINK ,uname,pass, aname);
+        /*execute ASync class */
+        createASync cas = new createASync();
+        cas.execute(LINK ,uname,pass, aname);
     }
 }
