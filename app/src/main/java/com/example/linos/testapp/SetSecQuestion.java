@@ -37,11 +37,13 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
 
     /*link of php file to be used*/
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/setQuestion.php";
+    private static final String LINKUPDATE = "http://galadriel.cs.utsa.edu/~group5/updateQuestion.php";
 
     /* variables to be used */
     String secQuestion;     //hold security Question Chosen
     String secAnswer;       //hold security Answer Chosen
     String uname;           //will hold username (passed by calling activity)
+    int isNew;
     EditText edAnswer;      //will hold user's inputted EditText
     Button bSubmit;         //button to submit into table
     int count;              // count of (?)
@@ -53,7 +55,7 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
 
         /* grab info from the user's input to be set in Security Table */
         Intent thisIntent = getIntent();
-
+        isNew = thisIntent.getExtras().getInt("isNew");
         uname = thisIntent.getExtras().getString("uname");
         edAnswer = (EditText) findViewById(R.id.edAnswer);
         bSubmit = (Button) findViewById(R.id.bSubmitSec);
@@ -214,6 +216,11 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
         }
 
         QuestionASync qas = new QuestionASync();
-        qas.execute(LINK ,uname, question, answer);
+        //if question has to be updated or is it a new question
+        if(isNew == 1) {
+            qas.execute(LINKUPDATE, uname, question, answer);
+        }else{
+            qas.execute(LINK, uname, question, answer);
+        }
     }
 }

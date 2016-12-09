@@ -194,9 +194,10 @@ public class MainActivity extends AppCompatActivity {
                     editor.putString(uname+TIME, Long.toString(currentTime));
                     editor.commit();
 
-                    Intent myIntent = new Intent(view.getContext(), SetSecQuestion.class);
-                    myIntent.putExtra("uname",uname);
-                    startActivityForResult(myIntent, 0);
+                    Intent secIntent = new Intent(view.getContext(), SetSecQuestion.class);
+                    secIntent.putExtra("uname",uname);
+                    secIntent.putExtra("isNew",0);
+                    startActivityForResult(secIntent, 0);
                     finish();
 
                 } else if(r.equals("success")){
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.putString(uname+TIME, Long.toString(currentTime));
                     editor.commit();
 
-                    if ((logCounter > 2) && (time < 30000)) {
+                    if ((logCounter > 2) && (time < MAXTIME)) {
 
                         Toast.makeText(getApplicationContext(), "Maximum attempted reached!\nTry again in 30s", Toast.LENGTH_SHORT).show();
                     }

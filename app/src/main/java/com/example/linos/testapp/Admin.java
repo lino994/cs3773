@@ -166,7 +166,7 @@ public class Admin extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //this.findViewById(android.R.id.message);
         switch (item.getItemId()) {
-            case R.id.password:
+            case R.id.password:     //change password
                 Intent ChangePassIn = new Intent(this, ResetPassword.class);
                 ChangePassIn.putExtra("uname",uname);
                 startActivityForResult(ChangePassIn, 0);
@@ -174,9 +174,10 @@ public class Admin extends AppCompatActivity {
                 finish();
                 return true;
 
-            case R.id.security:
+            case R.id.security:     //set Security Question
                 Intent setQuest = new Intent(this, SetSecQuestion.class);
-                setQuest.putExtra("uname",uname);
+                setQuest.putExtra("uname",uname);   //send username to next activity
+                setQuest.putExtra("isNew", 0);      //update question not insert new question
                 startActivity(setQuest);
                 Log.v("Selected","security");
                 // User chose the "Favorite" action, mark the current item
@@ -184,12 +185,13 @@ public class Admin extends AppCompatActivity {
                 return true;
             case R.id.new_user:
                 Intent newUser = new Intent(this, Create.class);
-                newUser.putExtra("uname",uname);
+                newUser.putExtra("uname",uname);    //send username to next activity
                 startActivity(newUser);
                 Log.v("Selected","Create new user");
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
+
             case R.id.new_message:
                 Intent newMessage = new Intent(this, SendMessage.class);
                 newMessage.putExtra("uname",uname);
@@ -198,6 +200,12 @@ public class Admin extends AppCompatActivity {
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
+
+            case R.id.pattern:
+                Intent PatternEncrypt = new Intent(this, PatternEncrypt.class);
+                startActivity(PatternEncrypt);
+                return true;
+
             case R.id.Logout:
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);

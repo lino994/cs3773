@@ -174,14 +174,18 @@ public class Messaging extends AppCompatActivity{
             case R.id.security:
                 Intent setQuest = new Intent(this, SetSecQuestion.class);
                 setQuest.putExtra("uname",uname);
+                setQuest.putExtra("isNew",1);
                 startActivity(setQuest);
                 Log.v("Selected","security");
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
+
             case R.id.pattern:
                 Intent PatternEncrypt = new Intent(this, PatternEncrypt.class);
                 startActivity(PatternEncrypt);
+                return true;
+
             case R.id.Logout:
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);

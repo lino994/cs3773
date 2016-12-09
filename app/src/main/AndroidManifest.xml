@@ -6,11 +6,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         //android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -35,7 +35,7 @@
         <activity android:name=".AnswerQuestion" />
         <activity android:name=".ResetPassword" />
         <activity android:name=".SetSecQuestion" />
-        <activity android:name=".PatternEncrypt"></activity>
+        <activity android:name=".PatternEncrypt" />
     </application>
 
 </manifest>

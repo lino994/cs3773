@@ -19,7 +19,7 @@ public class PatternEncrypt extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_pattern);
+        setContentView(R.layout.pinpattern);
 
 
         /* Capture our button from layout */
