@@ -1,7 +1,9 @@
 package com.example.linos.testapp;
 
 /**
- * Created by Ilya on 11/30/2016.
+ * Generates a Random Password for the user to first login
+ * and change if they want. Password follows guidelines
+ * stated in the Password Checker
  */
 import java.util.HashMap;
 import java.util.Map;

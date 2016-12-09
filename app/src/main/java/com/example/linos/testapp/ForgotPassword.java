@@ -29,10 +29,16 @@ import java.net.URLEncoder;
 import static android.R.attr.button;
 import static android.R.attr.start;
 
+/**
+ * First Activity in Forgot Password Process
+ * User must enter their username which is used to get the security question
+ * in their info on the database
+ */
 public class ForgotPassword extends AppCompatActivity {
+    /* variables to be used */
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getSecurityQuestion.php";
-    Button bSubmit;
-    EditText uedit;
+    Button bSubmit;     //button for submitting new password
+    EditText uedit;     // where username will be so security question can be accessed
     //String uname;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -40,6 +46,10 @@ public class ForgotPassword extends AppCompatActivity {
      */
     private GoogleApiClient client;
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,14 +86,7 @@ public class ForgotPassword extends AppCompatActivity {
                 String uname = params[1];
 
                 try{
-                    /******************TEST USERS****************************
-                     Username : UserOne
-                     Password : p@ss1
 
-                     Username : UserTwo
-                     Password : p@ss2
-
-                     ****************************************************/
                     String data = URLEncoder.encode("uname", "UTF-8")
                             + "=" + URLEncoder.encode(uname, "UTF-8");
 
@@ -120,19 +123,25 @@ public class ForgotPassword extends AppCompatActivity {
                 if (r.equals("failure to find userName")) {
                     Toast.makeText(getApplicationContext(), "Unable to find Username", Toast.LENGTH_SHORT).show();
                 }else {
-                   // TextView qedit = (TextView) findViewById(R.id.questionView);
-                   // qedit.setText(result);
-                    Intent newintent = new Intent(v.getContext(), AnswerQuestion.class );
-                    newintent.putExtra("result", result);
-                    newintent.putExtra("username",uname);
-                    startActivity(newintent);
+
+
+                    /**
+                     * send Security Question (result) and username to answer question activity
+                     */
+                    Intent answerIntent = new Intent(v.getContext(), AnswerQuestion.class );
+                    answerIntent.putExtra("result", result);
+                    answerIntent.putExtra("username",uname);
+                    startActivity(answerIntent);
                 }
             }
 
         }
-
-        ForgotASync las = new ForgotASync();
-        las.execute(LINK ,uname);
+        /**
+         * execute forgetAsync to retrieve question to be
+         * displayed when user answers question
+         */
+        ForgotASync fas = new ForgotASync();
+        fas.execute(LINK ,uname);
     }
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.

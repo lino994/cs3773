@@ -19,11 +19,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+/**
+ * Reset Password Activity where user can choose a new password
+ * it then updates the database if password meets specifications
+ * it has to contain:
+ *     - 8 to 10 Characters
+ *     - One UpperCase
+ *     - One LowerCase
+ *     - One Special Char
+ *     - One Number
+ *
+ */
 public class ResetPassword extends AppCompatActivity {
-    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/setPassword.php";
-    Button bSubmit;
-    EditText edPass1;
-    EditText edPass2;
+    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/setPassword.php";  //link to connect to database
+    Button bSubmit;         //submit new password
+    EditText edPass1;       //password field one
+    EditText edPass2;       /*password field two
+                             (user has to enter password twice)*/
     String uname;
 
     @Override
@@ -31,26 +43,37 @@ public class ResetPassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
         Intent ResetIntent  = getIntent();
+
+        /* initalize the variables to be used */
         uname = ResetIntent.getExtras().getString("uname");
         edPass1 = (EditText) findViewById(R.id.edNewPass);
         edPass2 = (EditText) findViewById(R.id.ednewPass2);
         bSubmit = (Button) findViewById(R.id.bSubmitNewPass);
 
+        //if button is clicked
         bSubmit.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                //set text entered to string
                 String pass1 = edPass1.getText().toString();
                 String pass2 = edPass2.getText().toString();
+
+                //initalize a new password Checker
                 PasswordChecker pCheck = new PasswordChecker();
                 Log.v("pass1", pass1);
                 Log.v("pass2", pass2);
 
+                    //if password fields don't match give user a message
                 if(!pass1.equals(pass2)){
                     Toast.makeText(getApplicationContext(), "Passwords Do Not Match", Toast.LENGTH_SHORT).show();
+
+                    //if they do equal  but password is not valid give the user an error
                 }else if(pass1.equals(pass2) && !pCheck.isValidPassword(pass1)) {
                     Toast.makeText(getApplicationContext(), "Invalid Password Type", Toast.LENGTH_SHORT).show();
+
+                    //if they are equal and password is valid initSubmit is called
                 }else if(pass1.equals(pass2) && pCheck.isValidPassword(pass1)){
                     String pass = pass1;
                     initSubmit(pass, v, uname);
@@ -60,6 +83,7 @@ public class ResetPassword extends AppCompatActivity {
     }
 
     @Override
+    //if back button is pressed it prevents users from returning to this screen
     public void onBackPressed(){
 
         if(uname.equals("admin")){
@@ -78,9 +102,13 @@ public class ResetPassword extends AppCompatActivity {
 
     }
 
-
+    /**
+     *  connect to database and update the users
+     *  new password using their username
+     *  reference to find them in the userTable
+     */
     public void initSubmit(final String pass, final View v, final String uname) {
-        class QuestionASync extends AsyncTask<String, Void, String> {
+        class ResetASync extends AsyncTask<String, Void, String> {
 
             private Dialog loadingDiag;
             @Override
@@ -96,14 +124,7 @@ public class ResetPassword extends AppCompatActivity {
                 String pass = params[2];
 
                 try{
-                    /******************TEST USERS****************************
-                     Username : UserOne
-                     Password : p@ss1
-
-                     Username : UserTwo
-                     Password : p@ss2
-
-                     ****************************************************/
+                  //set data to be written
                     String data = URLEncoder.encode("uname", "UTF-8")
                             + "=" + URLEncoder.encode(uname, "UTF-8");
                     data += "&" + URLEncoder.encode("pass", "UTF-8")
@@ -126,10 +147,10 @@ public class ResetPassword extends AppCompatActivity {
                     String line = null;
 
                     while((line = bReader.readLine()) != null) {
-                        Log.v("line: ", line);
+                       // Log.v("line: ", line);
                         sb.append(line + "\n");
                     }
-                    Log.v("string :", sb.toString());
+                    Log.v("string from reset:", sb.toString());
                     return sb.toString();
 
                 }catch(Exception e){
@@ -138,6 +159,10 @@ public class ResetPassword extends AppCompatActivity {
                 }
             }
             @Override
+            /**
+             * once password is reset it takes the user back to
+             * the login page
+             */
             protected void onPostExecute(String result) {
                 loadingDiag.dismiss();
                 String r = result.trim();
@@ -148,7 +173,8 @@ public class ResetPassword extends AppCompatActivity {
             }
 
         }
-        QuestionASync qas = new QuestionASync();
-        qas.execute(LINK , uname, pass);
+        //execute async
+        ResetASync ras = new ResetASync();
+        ras.execute(LINK , uname, pass);
     }
 }

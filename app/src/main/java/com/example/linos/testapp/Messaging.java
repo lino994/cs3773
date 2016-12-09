@@ -31,9 +31,16 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * main activity (first screen user see's after logging in
+ * it has a contacts list for the user to choose from and
+ * a menu of options for the user to access and choose from
+ */
 public class Messaging extends AppCompatActivity{
+    /*link to get a list of contacts */
+    //link to be used to connect
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getContacts.php";
-    String uname;
+    String uname;    // will store current logged in user's username
 
     @Override
 
@@ -44,6 +51,7 @@ public class Messaging extends AppCompatActivity{
         Toolbar myToolbar = (Toolbar) findViewById(R.id.options);
         setSupportActionBar(myToolbar);
 
+        //get username from previous activity
         Intent thisIntent = getIntent();
         uname = thisIntent.getExtras().getString("uname");
 
@@ -54,7 +62,7 @@ public class Messaging extends AppCompatActivity{
 
     /* retrieve contacts from server */
     public void InitContacts(String LINK, final String uname){
-            class QuestionASync extends AsyncTask<String, Void, String> {
+            class ContactASync extends AsyncTask<String, Void, String> {
 
                 private Dialog loadingDiag;
                 @Override
@@ -103,6 +111,12 @@ public class Messaging extends AppCompatActivity{
                 @Override
                 protected void onPostExecute(String result) {
                     loadingDiag.dismiss();
+
+                    /**
+                     * use an array list and  and JSON to decode result
+                     * set it to a ListView to be displayed to the user as
+                     * their contacts list
+                     */
                     ArrayList<String> contactList = new ArrayList<String>();
                     Log.v("resultFromJSON:",result);
                     try {
@@ -118,36 +132,33 @@ public class Messaging extends AppCompatActivity{
                     }
 
                     ArrayAdapter adapter = new ArrayAdapter(Messaging.this, R.layout.adaptor_text_layout, contactList);
-                    final ListView listView = (ListView) findViewById(R.id.contactList);
+                    ListView listView = (ListView) findViewById(R.id.contactList);
                     listView.setAdapter(adapter);
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        public void onItemClick(AdapterView<?> parent, View view,int position, long id)
-                        {
-                            String selectedFromList =(listView.getItemAtPosition(position).toString());
-                            Log.v("Selected",selectedFromList);
-                            Bundle info = new Bundle();
-                            info.putString("uname",uname);
-                            info.putString("reciever",selectedFromList);
-                            Intent newMessage = new Intent(Messaging.this, SendMessage.class);
-                            newMessage.putExtras(info);
-                            startActivity(newMessage);
-                            finish();
-                        }});
-
 
                 }
             }
-            QuestionASync qas = new QuestionASync();
-            qas.execute(LINK , uname);
+            ContactASync cas = new ContactASync();
+            cas.execute(LINK , uname);
         }
 
-
+    /**
+     * Creates Options menu
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
+
+    /**
+     * Checks what the user pressed in the options menu and takes them to
+     * the activity they chose.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //this.findViewById(android.R.id.message);
@@ -163,11 +174,18 @@ public class Messaging extends AppCompatActivity{
             case R.id.security:
                 Intent setQuest = new Intent(this, SetSecQuestion.class);
                 setQuest.putExtra("uname",uname);
+                setQuest.putExtra("isNew",1);
                 startActivity(setQuest);
                 Log.v("Selected","security");
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
+
+            case R.id.pattern:
+                Intent PatternEncrypt = new Intent(this, PatternEncrypt.class);
+                startActivity(PatternEncrypt);
+                return true;
+
             case R.id.Logout:
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
