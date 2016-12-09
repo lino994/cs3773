@@ -93,6 +93,14 @@ public class Admin extends AppCompatActivity {
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
+            case R.id.new_message:
+                Intent newMessage = new Intent(this, SendMessage.class);
+                newMessage.putExtra("uname",uname);
+                startActivity(newMessage);
+                Log.v("Selected","Send new Message");
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                return true;
 
             default:
                 // If we got here, the user's action was not recognized.
