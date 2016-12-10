@@ -211,8 +211,7 @@ public class Messaging extends AppCompatActivity{
                 return true;
 
             case R.id.pattern:
-                Intent PatternEncrypt = new Intent(this, PatternEncrypt.class);
-                startActivity(PatternEncrypt);
+
                 return true;
 
             case R.id.messages:
