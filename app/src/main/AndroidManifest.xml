@@ -36,6 +36,11 @@
         <activity android:name=".ResetPassword" />
         <activity android:name=".SetSecQuestion" />
         <activity android:name=".PatternEncrypt" />
+
+        <service
+            android:name=".CheckMessage"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

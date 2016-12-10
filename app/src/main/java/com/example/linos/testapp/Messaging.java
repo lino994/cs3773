@@ -7,8 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
-import android.app.Activity;
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -22,11 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,6 +36,7 @@ public class Messaging extends AppCompatActivity{
     //link to be used to connect
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getContacts.php";
     String uname;    // will store current logged in user's username
+    Intent checkMessageIntent;
 
     @Override
 
@@ -54,6 +50,11 @@ public class Messaging extends AppCompatActivity{
         //get username from previous activity
         Intent thisIntent = getIntent();
         uname = thisIntent.getExtras().getString("uname");
+
+        checkMessageIntent = new Intent(this,CheckMessage.class);
+        checkMessageIntent.putExtra("uname",uname);
+        startService(checkMessageIntent);
+
 
         InitContacts(LINK, uname);
 
@@ -197,6 +198,10 @@ public class Messaging extends AppCompatActivity{
             case R.id.pattern:
                 Intent PatternEncrypt = new Intent(this, PatternEncrypt.class);
                 startActivity(PatternEncrypt);
+                return true;
+
+            case R.id.msgs:
+
                 return true;
 
             case R.id.Logout:
