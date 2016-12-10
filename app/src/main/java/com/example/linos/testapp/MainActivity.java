@@ -267,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
+
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();

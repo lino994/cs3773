@@ -19,7 +19,7 @@ public class PatternEncrypt extends AppCompatActivity implements View.OnClickLis
     String code ="";
     Bundle info;             //info including current user and reciever of msg to be sent
     Boolean needsBoth;       //will key encryption be nessecary
-
+    String encryptedMessage = "";
     Button bNext;            //button used for testing to go to next instance
 
     @Override
@@ -136,15 +136,21 @@ public class PatternEncrypt extends AppCompatActivity implements View.OnClickLis
                 // do something when the button3 is clicked
                 code += "9";
                 System.out.println(code);
+
                 break;
             case R.id.button0:
                 System.out.println("I am a button0");
                 // do something when the button3 is clicked
                 code += "0";
                 System.out.println(code);
+
                 break;
             default:
                 break;
         }
+    }
+
+    public String getCode() {
+        return code;
     }
 }

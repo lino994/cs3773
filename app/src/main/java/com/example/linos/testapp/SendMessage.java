@@ -31,7 +31,10 @@ public class SendMessage extends AppCompatActivity{
     EditText edPass2;
     String uname;
     String sender;
-
+    String key = "123456";
+    String key2 = "773737";
+    String salt = "";
+    String encryptedMessage = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +44,9 @@ public class SendMessage extends AppCompatActivity{
         sender = info.getString("uname");
         uname = info.getString("reciever");
         edMessage = (EditText) findViewById(R.id.edMessage);
+
+
+
         bSubmit = (Button) findViewById(R.id.send);
 
         bSubmit.setOnClickListener(new View.OnClickListener()
@@ -48,7 +54,28 @@ public class SendMessage extends AppCompatActivity{
             @Override
             public void onClick(View v)
             {
-                String message = "Sent from user: " + sender +"\n"+ edMessage.getText().toString();
+                salt = sender;
+                Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
+                Encryption encryption2 = Encryption.getDefault(key2, salt, new byte[16]);
+
+                String msg = edMessage.getText().toString();
+                System.out.println("message " + msg);
+                encryptedMessage = encryption.encryptOrNull(msg);
+                encryptedMessage = encryption2.encryptOrNull(encryptedMessage);
+                System.out.println("encrypted message = " + encryptedMessage);
+
+                Encryption decryption = Encryption.getDefault(key2, salt, new byte[16]);
+                Encryption decryption2 = Encryption.getDefault(key, salt, new byte[16]);
+
+                String decryptedMessage1 = decryption.decryptOrNull(encryptedMessage);
+                String decryptedMesssage = decryption2.decryptOrNull(decryptedMessage1);
+                if (decryptedMesssage == null) {
+                    System.out.println("Can't decrypt the message");
+                } else {
+                    System.out.println("decrypted message = " + decryptedMesssage);
+                }
+
+                String message = "Sent from user: " + sender +"\n"+ encryptedMessage;
                 Log.v("Message: ", message);
                 initSubmit(v, uname, message);
 

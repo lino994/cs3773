@@ -101,4 +101,5 @@ public class SetEncryption extends AppCompatActivity {
             finish();
         }
     }
+
 }
