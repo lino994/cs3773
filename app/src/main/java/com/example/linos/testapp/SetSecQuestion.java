@@ -105,9 +105,9 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onBackPressed(){
         if(uname.equals("admin")) {
-                Intent myIntent = new Intent(SetSecQuestion.this, Admin.class);
-                myIntent.putExtra("uname", uname);
-                startActivity(myIntent);
+                //Intent myIntent = new Intent(SetSecQuestion.this, Admin.class);
+                //myIntent.putExtra("uname", uname);
+                //startActivity(myIntent);
                 finish();
         }else{
                 Intent myIntent = new Intent(SetSecQuestion.this, Messaging.class);

@@ -27,12 +27,16 @@ import java.util.ArrayList;
 public class CheckMessage extends Service {
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getMessage.php";
     static ArrayList<String> msgs = new ArrayList<String>();
+    DatabaseHelper mydb;
+
+
 
     public int onStartCommand(Intent intent,int flags,int startId){
         final String LINK = "http://galadriel.cs.utsa.edu/~group5/getMessage.php";
         final String uname;
         Intent thisIntent = intent;
         uname = thisIntent.getExtras().getString("uname");
+        mydb = new DatabaseHelper(this);
 
         Log.v("user",uname);
         Log.v("link",LINK);
@@ -41,7 +45,8 @@ public class CheckMessage extends Service {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while(uname != ""){
+                    Log.v("UNAME",uname);
                     long future = System.currentTimeMillis() + 5000;
                     while(System.currentTimeMillis() < future){
                         synchronized (this) {
@@ -61,6 +66,7 @@ public class CheckMessage extends Service {
     }
 
     public void onDestroy(){
+        super.onDestroy();
         Log.i("Service:","Destroyed");
     }
 
@@ -100,10 +106,14 @@ public class CheckMessage extends Service {
                     String line = null;
 
                     while((line = bReader.readLine()) != null) {
-                        Log.v("check line: ", line);
+                        //Log.v("check line: ", line);
                         sb.append(line + "\n");
+                        boolean insert = mydb.insertData(line);
+                        if(insert){
+                            Log.v("updated database","good");
+                        }
                     }
-                    Log.v("string :", sb.toString());
+                    Log.v("string ", sb.toString());
                     return sb.toString();
 
                 }catch(Exception e){
@@ -120,7 +130,7 @@ public class CheckMessage extends Service {
                  * their contacts list
                  */
                 //ArrayList<String> messages = new ArrayList<String>();
-                Log.v("check resultFromJSON:",result);
+                //Log.v("check resultFromJSON:",result);
                 try {
                     JSONArray jsonResult = new JSONArray(result);
                     for(int i = 0; i < jsonResult.length(); i++){
@@ -151,4 +161,5 @@ public class CheckMessage extends Service {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
 }

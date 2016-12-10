@@ -51,12 +51,14 @@ public class Admin extends AppCompatActivity {
     private int count;
     Button bLogout;
     String uname;
+    DatabaseHelper mydb;
     @Override
 
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message);
-
+        mydb = new DatabaseHelper(this);
             //initalize the options button
         Toolbar myToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.options);
         setSupportActionBar(myToolbar);

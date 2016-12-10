@@ -60,9 +60,9 @@ public class SendMessage extends AppCompatActivity{
     public void onBackPressed(){
 
         if(sender.equals("admin")){
-            Intent myIntent = new Intent(this, Admin.class);
-            myIntent.putExtra("uname",sender);
-            startActivityForResult(myIntent, 0);
+            //Intent myIntent = new Intent(this, Admin.class);
+            //myIntent.putExtra("uname",sender);
+            //startActivityForResult(myIntent, 0);
             finish();
         }
         else{
