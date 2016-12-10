@@ -138,7 +138,18 @@ public class Messaging extends AppCompatActivity{
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         public void onItemClick(AdapterView<?> parent, View view,int position, long id)
                         {
+                            /*store contact user chose */
                             String selectedFromList =(listView.getItemAtPosition(position).toString());
+
+                            /*start activity where user is given an option of choosing encryption options */
+                            Intent selectEn = new Intent(Messaging.this, SetEncryption.class);
+                            selectEn.putExtra("uname", uname);
+                            selectEn.putExtra("recv", selectedFromList);
+                            startActivity(selectEn);
+                            finish();
+
+
+                           /* String selectedFromList =(listView.getItemAtPosition(position).toString());
                             Log.v("Selected",selectedFromList);
                             Bundle info = new Bundle();
                             info.putString("uname",uname);
@@ -146,7 +157,7 @@ public class Messaging extends AppCompatActivity{
                             Intent newMessage = new Intent(Messaging.this, SendMessage.class);
                             newMessage.putExtras(info);
                             startActivity(newMessage);
-                            finish();
+                            finish();*/
                         }});
 
                 }

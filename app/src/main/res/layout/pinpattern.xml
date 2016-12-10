@@ -130,5 +130,17 @@
             android:layout_below="@+id/button1"
             android:layout_alignLeft="@+id/button1"
             android:layout_alignStart="@+id/button1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="next"
+            android:layout_alignBaseline="@+id/button0"
+            android:layout_alignBottom="@+id/button0"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="33dp"
+            android:layout_marginEnd="33dp"
+            android:id="@+id/bNext" />
     </RelativeLayout>
 </LinearLayout>

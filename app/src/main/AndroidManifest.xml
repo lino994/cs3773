@@ -41,6 +41,7 @@
             android:name=".CheckMessage"
             android:enabled="true"
             android:exported="true"></service>
+        <activity android:name=".SetEncryption"></activity>
     </application>
 
 </manifest>
