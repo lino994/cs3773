@@ -1,10 +1,12 @@
 package com.example.linos.testapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -15,11 +17,36 @@ import android.widget.*;
  */
 public class PatternEncrypt extends AppCompatActivity implements View.OnClickListener{
     String code ="";
+    Bundle info;             //info including current user and reciever of msg to be sent
+    Boolean needsBoth;       //will key encryption be nessecary
+
+    Button bNext;            //button used for testing to go to next instance
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.pinpattern);
+
+        /**
+         * Grab sender and reciever to be used in send message
+         **/
+        Intent ResetIntent  = getIntent();
+        info = ResetIntent.getExtras();
+        needsBoth = info.getBoolean("needsBoth");           //check if key pattern is needed before going to send msg
+
+        bNext = (Button) findViewById(R.id.bNext);          //go automatically to next screen (TESTING ONLY)
+        bNext.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent newMessage = new Intent(PatternEncrypt.this, SendMessage.class);
+                newMessage.putExtras(info);
+                startActivity(newMessage);
+                finish();
+            }
+        });
 
 
         /* Capture our button from layout */

@@ -89,7 +89,7 @@ public class SetSecQuestion extends AppCompatActivity implements AdapterView.OnI
         categories.add("Select Question");
         categories.add("Name of First Pet?");
         categories.add("What University Did You Attend?");
-        categories.add("Mother's Maiden Name?");
+        categories.add("Mother Maiden Name?");
 
 
         // Creating adapter for spinner

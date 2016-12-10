@@ -36,6 +36,7 @@
         <activity android:name=".ResetPassword" />
         <activity android:name=".SetSecQuestion" />
         <activity android:name=".PatternEncrypt" />
+        <activity android:name=".SetEncryption"></activity>
     </application>
 
 </manifest>
