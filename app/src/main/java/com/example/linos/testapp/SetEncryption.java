@@ -59,11 +59,20 @@ public class SetEncryption extends AppCompatActivity {
                 if(options[0].getIsChecked() && options[1].getIsChecked()){
                     System.out.println("both Selected");
                     info.putBoolean("needsBoth", true);             //used to check if both encryption will be needed before writing msg
+                    Intent newMessage = new Intent(SetEncryption.this, PatternEncrypt.class);
+                    newMessage.putExtras(info);
+                    startActivity(newMessage);
+                    finish();
+
                 }
                 /*key encryption selected*/
                 else if(options[0].getIsChecked() && !options[1].getIsChecked()){
-                    System.out.println("key Selected");
-                    info.putBoolean("needsBoth", false);           //used to check if both encryption will be needed before writing msg
+                    Intent setKey = new Intent(SetEncryption.this, EnterKey.class);
+                    info.putBoolean("needsBoth", false);
+                    setKey.putExtras(info);
+                    startActivity(setKey);
+                    finish();
+                    //used to check if both encryption will be needed before writing msg
                 }
                 /*pattern encryption selected*/
                 else if(!options[0].getIsChecked() && options[1].getIsChecked()){

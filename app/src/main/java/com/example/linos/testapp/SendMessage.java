@@ -26,27 +26,37 @@ import java.net.URLEncoder;
 
 public class SendMessage extends AppCompatActivity{
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/newMessage.php";
-    Button bSubmit;
-    EditText edMessage;
-    EditText edPass2;
-    String uname;
-    String sender;
-    String key = "123456";
-    String key2 = "773737";
-    String salt = "";
-    String encryptedMessage = "";
+    Button bSubmit;                 //button to send msg
+    Boolean needsBoth;              //needs both encryptions
+    Boolean needsPattern;           //needs pattern encryption
+    Boolean needsKey;               //needs key encryption
+    Bundle info;                    //hold info needed to send message and check options chosen
+    EditText edMessage;             //message edittext
+    String uname;                   //uname of user to be sent to
+    String sender;                  //current username
+    String key;                     //key to encrypt
+    String patternKey;              //key from pattern chosen
+    String salt = "";               //salt for encryption (delicious)
+    String encryptedMessage = "";   //message to be sent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_message);
         Intent ResetIntent  = getIntent();
-        Bundle info = ResetIntent.getExtras();
+
+        /*grab nessecary info from previous activity */
+        info = ResetIntent.getExtras();
         sender = info.getString("uname");
         uname = info.getString("reciever");
+        needsKey = info.getBoolean("needsKey");
+        needsBoth = info.getBoolean("needsBoth");
+        needsPattern = info.getBoolean("needsPattern");
+
+        /*where user enters message*/
         edMessage = (EditText) findViewById(R.id.edMessage);
 
 
-
+        /*initalize button to send */
         bSubmit = (Button) findViewById(R.id.send);
 
         bSubmit.setOnClickListener(new View.OnClickListener()
@@ -55,26 +65,44 @@ public class SendMessage extends AppCompatActivity{
             public void onClick(View v)
             {
                 salt = sender;
-                Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
-                Encryption encryption2 = Encryption.getDefault(key2, salt, new byte[16]);
+                //user only wants key encryption
+                if(needsKey && !needsBoth) {
+                    key = info.getString("key");
+                    Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
+                    String msg = edMessage.getText().toString();
+                    encryptedMessage = encryption.encryptOrNull(msg);
 
-                String msg = edMessage.getText().toString();
-                System.out.println("message " + msg);
-                encryptedMessage = encryption.encryptOrNull(msg);
-                encryptedMessage = encryption2.encryptOrNull(encryptedMessage);
-                System.out.println("encrypted message = " + encryptedMessage);
+                }
+                //user only wants pattern encryption
+                else if(needsPattern && !needsBoth){  //message does not need key encryption
+                    key = info.getString("patternKey");
 
-                Encryption decryption = Encryption.getDefault(key2, salt, new byte[16]);
-                Encryption decryption2 = Encryption.getDefault(key, salt, new byte[16]);
+                    Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
+                    String msg = edMessage.getText().toString();
+                    encryptedMessage = encryption.encryptOrNull(msg);
 
-                String decryptedMessage1 = decryption.decryptOrNull(encryptedMessage);
-                String decryptedMesssage = decryption2.decryptOrNull(decryptedMessage1);
-                if (decryptedMesssage == null) {
-                    System.out.println("Can't decrypt the message");
-                } else {
-                    System.out.println("decrypted message = " + decryptedMesssage);
+                }
+                //user wants both encryptions
+                else if(needsBoth){
+                    key = info.getString("key");
+
+                    patternKey = info.getString("patternKey");
+
+                    Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
+                    String msg = edMessage.getText().toString();
+                    encryptedMessage = encryption.encryptOrNull(msg);
+
+                    Encryption encryption2 = Encryption.getDefault(patternKey, salt, new byte[16]);
+                    encryptedMessage = encryption.encryptOrNull(encryptedMessage);
+
+                }
+                //user want no encryption
+                else{
+                    encryptedMessage = edMessage.getText().toString();
                 }
 
+
+                //message to be sent
                 String message = "Sent from user: " + sender +"\n"+ encryptedMessage;
                 Log.v("Message: ", message);
                 initSubmit(v, uname, message);
@@ -84,12 +112,12 @@ public class SendMessage extends AppCompatActivity{
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
 
         if(sender.equals("admin")){
-            //Intent myIntent = new Intent(this, Admin.class);
-            //myIntent.putExtra("uname",sender);
-            //startActivityForResult(myIntent, 0);
+            Intent myIntent = new Intent(this, Admin.class);
+            myIntent.putExtra("uname",sender);
+            startActivityForResult(myIntent, 0);
             finish();
         }
         else{

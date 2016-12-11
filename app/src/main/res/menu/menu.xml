@@ -8,10 +8,6 @@ tools:context="com.example.nique.myapplication.MainActivity">
         android:id="@+id/security" />
     <item android:id="@+id/password"
         android:title="Change Password" />
-    <item android:title="Encryption by Key"
-        android:id="@+id/encryption" />
-    <item android:title="Encryption by Pattern"
-        android:id="@+id/pattern" />
     <item android:title="Logout"
         android:id="@+id/Logout" />
 </menu>

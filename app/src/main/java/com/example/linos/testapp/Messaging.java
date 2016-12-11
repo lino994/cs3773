@@ -152,16 +152,6 @@ public class Messaging extends AppCompatActivity{
                             startActivity(selectEn);
                             finish();
 
-
-                           /* String selectedFromList =(listView.getItemAtPosition(position).toString());
-                            Log.v("Selected",selectedFromList);
-                            Bundle info = new Bundle();
-                            info.putString("uname",uname);
-                            info.putString("reciever",selectedFromList);
-                            Intent newMessage = new Intent(Messaging.this, SendMessage.class);
-                            newMessage.putExtras(info);
-                            startActivity(newMessage);
-                            finish();*/
                         }});
 
                 }
@@ -208,10 +198,6 @@ public class Messaging extends AppCompatActivity{
                 Log.v("Selected","security");
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
-                return true;
-
-            case R.id.pattern:
-
                 return true;
 
             case R.id.messages:

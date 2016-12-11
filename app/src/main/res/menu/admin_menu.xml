@@ -9,14 +9,8 @@
         app:showAsAction="never" />
     <item android:title="Set Security Question"
         android:id="@+id/security" />
-    <item android:title="Encryption by Key"
-        android:id="@+id/encryption" />
-    <item android:title="Encryption by Pattern"
-        android:id="@+id/pattern" />
     <item android:title="Create New User"
         android:id="@+id/new_user" />
-    <item android:title="Send new message"
-        android:id="@+id/new_message" />
     <item android:title="Item"
         android:id="@+id/messages" />
     <item android:title="Logout"

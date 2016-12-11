@@ -162,15 +162,6 @@ public class Admin extends AppCompatActivity {
                         startActivity(selectEn);
                         finish();
 
-                        /* String selectedFromList =(listView.getItemAtPosition(position).toString());
-                        Log.v("Selected",selectedFromList);
-                        Bundle info = new Bundle();
-                        info.putString("uname",uname);
-                        info.putString("reciever",selectedFromList);
-                        Intent newMessage = new Intent(Admin.this, SendMessage.class);
-                        newMessage.putExtras(info);
-                        startActivity(newMessage);
-                        finish();*/
                     }});
 
             }
@@ -215,20 +206,6 @@ public class Admin extends AppCompatActivity {
                 Log.v("Selected","Create new user");
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
-                return true;
-
-            case R.id.new_message:
-                Intent newMessage = new Intent(this, SendMessage.class);
-                newMessage.putExtra("uname",uname);
-                startActivity(newMessage);
-                Log.v("Selected","Send new Message");
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
-                return true;
-
-            case R.id.pattern:
-                Intent PatternEncrypt = new Intent(this, PatternEncrypt.class);
-                startActivity(PatternEncrypt);
                 return true;
 
             case R.id.Logout:
