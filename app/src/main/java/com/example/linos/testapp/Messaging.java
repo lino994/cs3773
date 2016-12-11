@@ -39,7 +39,6 @@ public class Messaging extends AppCompatActivity{
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getContacts.php";
     String uname;    // will store current logged in user's username
     Intent checkMessageIntent;
-    DatabaseHelper mydb;
 
     @Override
 
@@ -47,7 +46,6 @@ public class Messaging extends AppCompatActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message);
-        mydb = new DatabaseHelper(this);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.options);
         setSupportActionBar(myToolbar);
 
@@ -199,23 +197,23 @@ public class Messaging extends AppCompatActivity{
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
-
-            case R.id.messages:
-                Cursor res = mydb.getAllMessages();
-                if(res.getCount() == 0){
-                    Log.v("NO MESSAGE","true");
-                }
-                StringBuffer buf = new StringBuffer();
-                while(res.moveToNext()){
-                    buf.append("id :" + res.getString(0) + "\n" );
-                    buf.append("message :" + res.getString(1) + "\n" );
-                }
-                AlertDialog.Builder build = new AlertDialog.Builder(this);
-                build.setCancelable(true);
-                build.setTitle("Data");
-                build.setMessage(buf.toString());
-                build.show();
-                return true;
+//
+//            case R.id.messages:
+//                Cursor res = mydb.getAllMessages();
+//                if(res.getCount() == 0){
+//                    Log.v("NO MESSAGE","true");
+//                }
+//                StringBuffer buf = new StringBuffer();
+//                while(res.moveToNext()){
+//                    buf.append("id :" + res.getString(0) + "\n" );
+//                    buf.append("message :" + res.getString(1) + "\n" );
+//                }
+//                AlertDialog.Builder build = new AlertDialog.Builder(this);
+//                build.setCancelable(true);
+//                build.setTitle("Data");
+//                build.setMessage(buf.toString());
+//                build.show();
+//                return true;
 
             case R.id.Logout:
                 stopService(checkMessageIntent);

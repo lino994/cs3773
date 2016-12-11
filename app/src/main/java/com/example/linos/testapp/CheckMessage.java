@@ -27,7 +27,6 @@ import java.util.ArrayList;
 public class CheckMessage extends Service {
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getMessage.php";
     static ArrayList<String> msgs = new ArrayList<String>();
-    DatabaseHelper mydb;
 
 
 
@@ -36,7 +35,6 @@ public class CheckMessage extends Service {
         final String uname;
         Intent thisIntent = intent;
         uname = thisIntent.getExtras().getString("uname");
-        mydb = new DatabaseHelper(this);
 
         Log.v("user",uname);
         Log.v("link",LINK);
@@ -105,14 +103,13 @@ public class CheckMessage extends Service {
                     StringBuilder sb = new StringBuilder();
                     String line = null;
 
-                    while((line = bReader.readLine()) != null) {
+               //     while((line = bReader.readLine()) != null) {
                         //Log.v("check line: ", line);
-                        sb.append(line + "\n");
-                        boolean insert = mydb.insertData(line);
-                        if(insert){
-                            Log.v("updated database","good");
-                        }
-                    }
+//                        sb.append(line + "\n");
+//                        if(insert){
+//                            Log.v("updated database","good");
+//                        }
+                  //  }
                     Log.v("string ", sb.toString());
                     return sb.toString();
 
