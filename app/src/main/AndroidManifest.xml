@@ -43,7 +43,8 @@
             android:exported="true" />
 
         <activity android:name=".SetEncryption" />
-        <activity android:name=".EnterKey"></activity>
+        <activity android:name=".EnterKey" />
+        <activity android:name=".Inbox"></activity>
     </application>
 
 </manifest>

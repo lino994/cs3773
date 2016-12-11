@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class CheckMessage extends Service {
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getMessage.php";
     static ArrayList<String> msgs = new ArrayList<String>();
-
+    DatabaseHelper myDb;
 
 
     public int onStartCommand(Intent intent,int flags,int startId){
@@ -35,7 +35,8 @@ public class CheckMessage extends Service {
         final String uname;
         Intent thisIntent = intent;
         uname = thisIntent.getExtras().getString("uname");
-
+        //this.deleteDatabase("random.db");
+        myDb = new DatabaseHelper(this);
         Log.v("user",uname);
         Log.v("link",LINK);
         Log.i("Service:","Started");
@@ -103,13 +104,18 @@ public class CheckMessage extends Service {
                     StringBuilder sb = new StringBuilder();
                     String line = null;
 
-               //     while((line = bReader.readLine()) != null) {
-                        //Log.v("check line: ", line);
-//                        sb.append(line + "\n");
-//                        if(insert){
-//                            Log.v("updated database","good");
-//                        }
-                  //  }
+                   while((line = bReader.readLine()) != null) {
+                        Log.v("check line: ", line);
+                        sb.append(line + "\n");
+                        String trim = line.trim();
+                        Boolean insert = false;
+                        if(!trim.equals("failure")) {
+                            insert = myDb.insertData(line, uname, "1:00am");
+                        }
+                        if(insert){
+                            Log.v("updated database","good");
+                        }
+                    }
                     Log.v("string ", sb.toString());
                     return sb.toString();
 
@@ -127,18 +133,24 @@ public class CheckMessage extends Service {
                  * their contacts list
                  */
                 //ArrayList<String> messages = new ArrayList<String>();
-                //Log.v("check resultFromJSON:",result);
-                try {
-                    JSONArray jsonResult = new JSONArray(result);
-                    for(int i = 0; i < jsonResult.length(); i++){
-                        JSONObject jsonObj = jsonResult.getJSONObject(i);
-                        msgs.add(jsonObj.getString("messages"));
+                //Log.v("RESULT:",result);
+                String r = result.trim();
+                //Log.v("RESULT:",r);
+                if(!r.equals("failure")) {
+                    try {
+                        JSONArray jsonResult = new JSONArray(result);
+                        for (int i = 0; i < jsonResult.length(); i++) {
+                            JSONObject jsonObj = jsonResult.getJSONObject(i);
+                            msgs.add(jsonObj.getString("messages"));
+                        }
+                        Log.v("check after List set", msgs.toString());
+
+
+                    } catch (Exception e) {
+                        Log.v("check JSON Decoding:", e.getMessage());
                     }
-                    Log.v("check after List set",msgs.toString());
 
 
-                }catch (Exception e){
-                    Log.v("check JSON Decoding:", e.getMessage());
                 }
 
 

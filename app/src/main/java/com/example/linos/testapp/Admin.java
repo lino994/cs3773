@@ -205,6 +205,13 @@ public class Admin extends AppCompatActivity {
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
+            case R.id.messages:
+                /*send info and start check message activity */
+                Intent checkInbox = new Intent(Admin.this, Inbox.class);
+                checkInbox.putExtra("current",uname);
+                startActivity(checkInbox);
+
+                return true;
 
             case R.id.Logout:
                 Intent intent = new Intent(this, MainActivity.class);

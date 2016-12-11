@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.regex.*;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -37,8 +38,13 @@ public class Messaging extends AppCompatActivity{
     /*link to get a list of contacts */
     //link to be used to connect
     private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getContacts.php";
-    String uname;    // will store current logged in user's username
+    String uname;           // will store current logged in user's username
+    String msg = "";        //msg stored
+    String recv = "";       //who recieved msg
+    String sender = "";     //who sent msg
+    String newMsg = "";     //formatted msg
     Intent checkMessageIntent;
+    DatabaseHelper myDb;
 
     @Override
 
@@ -48,6 +54,8 @@ public class Messaging extends AppCompatActivity{
         setContentView(R.layout.message);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.options);
         setSupportActionBar(myToolbar);
+
+        myDb = new DatabaseHelper(this);
 
         //get username from previous activity
         Intent thisIntent = getIntent();
@@ -122,6 +130,7 @@ public class Messaging extends AppCompatActivity{
                      */
                     ArrayList<String> contactList = new ArrayList<String>();
                     Log.v("resultFromJSON:",result);
+
                     try {
                         JSONArray jsonResult = new JSONArray(result);
                         for(int i = 0; i < jsonResult.length(); i++){
@@ -197,23 +206,15 @@ public class Messaging extends AppCompatActivity{
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;
-//
-//            case R.id.messages:
-//                Cursor res = mydb.getAllMessages();
-//                if(res.getCount() == 0){
-//                    Log.v("NO MESSAGE","true");
-//                }
-//                StringBuffer buf = new StringBuffer();
-//                while(res.moveToNext()){
-//                    buf.append("id :" + res.getString(0) + "\n" );
-//                    buf.append("message :" + res.getString(1) + "\n" );
-//                }
-//                AlertDialog.Builder build = new AlertDialog.Builder(this);
-//                build.setCancelable(true);
-//                build.setTitle("Data");
-//                build.setMessage(buf.toString());
-//                build.show();
-//                return true;
+
+            case R.id.messages:
+
+                /*send info and start check message activity */
+                Intent checkInbox = new Intent(Messaging.this, Inbox.class);
+                checkInbox.putExtra("current",uname);
+                startActivity(checkInbox);
+
+                return true;
 
             case R.id.Logout:
                 stopService(checkMessageIntent);

@@ -103,7 +103,7 @@ public class SendMessage extends AppCompatActivity{
 
 
                 //message to be sent
-                String message = "Sent from user: " + sender +"\n"+ encryptedMessage;
+                String message = uname +"~" + sender +"~"+encryptedMessage;
                 Log.v("Message: ", message);
                 initSubmit(v, uname, message);
 
