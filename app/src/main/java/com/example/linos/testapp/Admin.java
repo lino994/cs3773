@@ -47,10 +47,12 @@ import java.util.List;
 public class Admin extends AppCompatActivity {
 
     //link to access database
-    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getContacts.php";
+    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getContacts1.php";
     private int count;
     Button bLogout;
     String uname;
+    Intent checkMessageIntent;
+    ArrayList<Contact> contactList;
     @Override
 
     public void onCreate(Bundle savedInstanceState) {
@@ -65,8 +67,15 @@ public class Admin extends AppCompatActivity {
         Intent myIn = getIntent();
         uname = myIn.getExtras().getString("uname");
 
+            // start checking message
+        checkMessageIntent = new Intent(this,CheckMessage.class);
+        checkMessageIntent.putExtra("uname",uname);
+        startService(checkMessageIntent);
+
             //function that connects to database to get contact information
         InitContacts(LINK, uname);
+
+        contactList = new ArrayList<>();   //ArrayList to hold contact information
     }
 
     /* retrieve contacts from server */
@@ -127,7 +136,7 @@ public class Admin extends AppCompatActivity {
             protected void onPostExecute(String result) {
 
                 loadingDiag.dismiss();                                     //dismiss loading signal
-                ArrayList<String> contactList = new ArrayList<String>();   //ArrayList to hold contact information
+
                 Log.v("resultFromJSON:",result);
 
 
@@ -135,7 +144,12 @@ public class Admin extends AppCompatActivity {
                     JSONArray jsonResult = new JSONArray(result);           //turn result string into JSONArray
                     for(int i = 0; i < jsonResult.length(); i++){
                         JSONObject jsonObj = jsonResult.getJSONObject(i);   //turn each item in array in JSONObject
-                        contactList.add(jsonObj.getString("user"));         //turn to obj to string and add to ArrayList
+                        String userName = jsonObj.getString("user");         //turn to obj to string and add to ArrayList
+                        String contactName = jsonObj.getString("name");         //turn to obj to string and add to ArrayList
+
+                        Contact contact = new Contact(userName, contactName);
+                        contactList.add(contact);
+
                     }
                     Log.v("after List set",contactList.toString());
 
@@ -144,19 +158,19 @@ public class Admin extends AppCompatActivity {
                 }
 
                 /* Set Up List View */
-                ArrayAdapter adapter = new ArrayAdapter(Admin.this, R.layout.adaptor_text_layout, contactList);
+                ContactListAdapter adapter = new ContactListAdapter(Admin.this, contactList);
                 final ListView listView = (ListView) findViewById(R.id.contactList);
                 listView.setAdapter(adapter);
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> parent, View view,int position, long id)
                     {
                         /*store contact user chose */
-                        String selectedFromList =(listView.getItemAtPosition(position).toString());
+                        Object selectedContact = listView.getItemAtPosition(position);
 
                         /*start activity where user is given an option of choosing encryption options */
                         Intent selectEn = new Intent(Admin.this, SetEncryption.class);
                         selectEn.putExtra("uname", uname);
-                        selectEn.putExtra("recv", selectedFromList);
+                        selectEn.putExtra("recv", ((Contact) selectedContact).getUserName());
                         startActivity(selectEn);
                         finish();
 
@@ -209,11 +223,13 @@ public class Admin extends AppCompatActivity {
                 /*send info and start check message activity */
                 Intent checkInbox = new Intent(Admin.this, Inbox.class);
                 checkInbox.putExtra("current",uname);
+                checkInbox.putExtra("contactList", contactList);
                 startActivity(checkInbox);
 
                 return true;
 
             case R.id.Logout:
+                stopService(checkMessageIntent);
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();

@@ -23,6 +23,7 @@
         <activity android:name=".Create" />
         <activity android:name=".Messaging" />
         <activity android:name=".SendMessage" />
+
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -36,6 +37,10 @@
         <activity android:name=".ResetPassword" />
         <activity android:name=".SetSecQuestion" />
         <activity android:name=".PatternEncrypt" />
+        <activity android:name=".MessageDisplay"
+            android:windowSoftInputMode="adjustResize"
+
+            />
 
         <service
             android:name=".CheckMessage"
@@ -44,7 +49,9 @@
 
         <activity android:name=".SetEncryption" />
         <activity android:name=".EnterKey" />
-        <activity android:name=".Inbox"></activity>
+        <activity android:name=".Inbox" />
+
+
     </application>
 
 </manifest>

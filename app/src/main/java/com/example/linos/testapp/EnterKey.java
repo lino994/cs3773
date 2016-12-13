@@ -20,6 +20,7 @@ public class EnterKey extends AppCompatActivity {
     String key;
     EditText edKey;
     Bundle info;
+    String action;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -40,7 +41,7 @@ public class EnterKey extends AppCompatActivity {
         info = myIntent.getExtras();
         bSubmit = (Button) findViewById(R.id.bSubmitKey);
         edKey = (EditText) findViewById(R.id.edKey);
-
+        action = info.getString("action");
 
         bSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,9 +53,12 @@ public class EnterKey extends AppCompatActivity {
                     info.putString("key", key);
 
                     /*start send message activity */
-                    Intent sendMsg = new Intent(EnterKey.this, SendMessage.class);
-                    sendMsg.putExtras(info);
-                    startActivity(sendMsg);
+                    Intent newIntend = new Intent(EnterKey.this, SendMessage.class);
+                    if (action.equals("readMessage")) {
+                        newIntend = new Intent(EnterKey.this, MessageDisplay.class);
+                    }
+                    newIntend.putExtras(info);
+                    startActivity(newIntend);
                     finish();
                 }else{
                     Toast.makeText(getApplicationContext(), "Key Not Valid", Toast.LENGTH_SHORT).show();

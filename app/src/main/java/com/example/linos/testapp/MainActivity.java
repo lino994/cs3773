@@ -2,6 +2,7 @@ package com.example.linos.testapp;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -201,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
                     finish();
 
                 } else if(r.equals("success")){
-
                     editor.putString(uname+COUNT, "0");
                     long currentTime = System.currentTimeMillis();
                     editor.putString(uname+TIME, Long.toString(currentTime));

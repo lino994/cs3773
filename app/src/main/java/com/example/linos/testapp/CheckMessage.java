@@ -1,17 +1,15 @@
 package com.example.linos.testapp;
 
 import android.app.Dialog;
+import android.app.IntentService;
 import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Intent;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,153 +20,128 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+
+
+import java.util.Date;
+import java.text.DateFormat;
+
 
 public class CheckMessage extends Service {
-    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getMessage.php";
-    static ArrayList<String> msgs = new ArrayList<String>();
+
+    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getMessage1.php";
+    private static final String DATABASE_NAME = "random.db";
+
     DatabaseHelper myDb;
+    String uname;
+    boolean running = false;
 
-
-    public int onStartCommand(Intent intent,int flags,int startId){
-        final String LINK = "http://galadriel.cs.utsa.edu/~group5/getMessage.php";
-        final String uname;
-        Intent thisIntent = intent;
-        uname = thisIntent.getExtras().getString("uname");
-        //this.deleteDatabase("random.db");
+    public void onCreate() {
+        running = true;
+        this.deleteDatabase(DATABASE_NAME);
         myDb = new DatabaseHelper(this);
-        Log.v("user",uname);
-        Log.v("link",LINK);
-        Log.i("Service:","Started");
 
-        Runnable r = new Runnable() {
-            @Override
+    }
+
+
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        uname = intent.getExtras().getString("uname");
+        new Thread(new Runnable() {
             public void run() {
-                while(uname != ""){
-                    Log.v("UNAME",uname);
-                    long future = System.currentTimeMillis() + 5000;
-                    while(System.currentTimeMillis() < future){
-                        synchronized (this) {
+                if (running) {
+                    while (running) {
                             try {
-                                wait(future - System.currentTimeMillis());
-                                CheckMsg(LINK, uname);
-                                Log.v("Service", "executing at" + System.currentTimeMillis());
-                            } catch (Exception e) {}
-                        }
+                                checkMessage(uname, LINK);
+                                Thread.sleep(5000);
+
+                            } catch (Exception e) {
+                            }
+
                     }
+
                 }
+
             }
-        };
-        Thread check = new Thread(r);
-        check.start();
-        return Service.START_STICKY;
+        }).start();
+
+        return START_STICKY;
     }
 
     public void onDestroy(){
+        //super.stopSelf();
+        //check.interrupt();
+        running = false;
         super.onDestroy();
+
         Log.i("Service:","Destroyed");
     }
 
-    public void CheckMsg(String LINK, final String uname){
-        class CheckMsgASync extends AsyncTask<String, Void, String> {
 
-            private Dialog loadingDiag;
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
+    private void checkMessage(String uname, String uri) {
+        try{
+
+            String data = URLEncoder.encode("uname", "UTF-8")
+                    + "=" + URLEncoder.encode(uname, "UTF-8");
+
+
+            URL url = new URL(uri);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setUseCaches(false);
+
+            OutputStreamWriter osWrite = new OutputStreamWriter(connection.getOutputStream());
+            osWrite.write(data);
+            osWrite.flush();
+
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+
+            while((line = bReader.readLine()) != null) {
+                this.messagesExtract(line);
+                Log.v("check line: ", line);
             }
+            connection.disconnect();
+            Log.v("string ", sb.toString());
 
-            @Override
-            protected String doInBackground(String... params) {
-                String uri = params[0];
-                String uname = params[1];
-                Log.v("do in back uname",uname);
-
-                try{
-
-                    //data to be sent
-                    String data = URLEncoder.encode("uname", "UTF-8")
-                            + "=" + URLEncoder.encode(uname, "UTF-8");
-                    //Log.v("user: ", uname
-
-                    URL url = new URL(uri);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-                    connection.setDoOutput(true);
-                    OutputStreamWriter osWrite = new OutputStreamWriter(connection.getOutputStream());
-                    osWrite.write(data);
-                    osWrite.flush();
-
-                    BufferedReader bReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-
-                   while((line = bReader.readLine()) != null) {
-                        Log.v("check line: ", line);
-                        sb.append(line + "\n");
-                        String trim = line.trim();
-                        Boolean insert = false;
-                        if(!trim.equals("failure")) {
-                            insert = myDb.insertData(line, uname, "1:00am");
-                        }
-                        if(insert){
-                            Log.v("updated database","good");
-                        }
-                    }
-                    Log.v("string ", sb.toString());
-                    return sb.toString();
-
-                }catch(Exception e){
-                    Log.v("Conn Error  :", e.getMessage());
-                    return new String ("Exception: " + e.getMessage());
-                }
-            }
-            @Override
-            protected void onPostExecute(String result) {
-
-                /**
-                 * use an array list and  and JSON to decode result
-                 * set it to a ListView to be displayed to the user as
-                 * their contacts list
-                 */
-                //ArrayList<String> messages = new ArrayList<String>();
-                //Log.v("RESULT:",result);
-                String r = result.trim();
-                //Log.v("RESULT:",r);
-                if(!r.equals("failure")) {
-                    try {
-                        JSONArray jsonResult = new JSONArray(result);
-                        for (int i = 0; i < jsonResult.length(); i++) {
-                            JSONObject jsonObj = jsonResult.getJSONObject(i);
-                            msgs.add(jsonObj.getString("messages"));
-                        }
-                        Log.v("check after List set", msgs.toString());
-
-
-                    } catch (Exception e) {
-                        Log.v("check JSON Decoding:", e.getMessage());
-                    }
-
-
-                }
-
-
-
-            }
+        }catch(Exception e){
+            Log.v("Conn Error  :", e.getMessage());
         }
-        CheckMsgASync cmsg = new CheckMsgASync();
-        cmsg.execute(LINK , uname);
     }
+    private void messagesExtract(String input) {
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
-    public static ArrayList<String> getMsgs(){
-        ArrayList<String> copy = msgs;
-        return copy;
-    }
-    @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+
+        try {
+            JSONArray jsonArray = new JSONArray(input);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject job = jsonArray.getJSONObject(i);
+                String msg = job.getString("messages");
+                String recv = job.getString("recv");
+                String sender = job.getString("sender");
+                String number = job.getString("messageNumber");
+                String encrypt = job.getString("encrypt");
+                Date recvTime = new Date();
+                String timeString = dateFormat.format(recvTime);
+
+                int messageNumber = Integer.parseInt(number);
+                int encryptMethod = Integer.parseInt(encrypt);
+
+                myDb.insertData(msg, sender, timeString, messageNumber, recv, 0, encryptMethod);
+                Message newMessage = new Message(sender, recv, msg, messageNumber, encryptMethod);
+                newMessage.setTime(recvTime);
+            }
+
+        } catch (Exception e){
+            Log.v("check JSON Decoding:", e.getMessage());
+        }
     }
 
 }

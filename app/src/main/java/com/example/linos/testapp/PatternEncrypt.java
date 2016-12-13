@@ -4,12 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.*;
-
 import android.widget.*;
 
 /**
@@ -23,6 +18,7 @@ public class PatternEncrypt extends AppCompatActivity implements View.OnClickLis
     int count = 0;
     String encryptedMessage = "";
     Button bNext;            //button used for testing to go to next instance
+    String action;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +33,7 @@ public class PatternEncrypt extends AppCompatActivity implements View.OnClickLis
         info = ResetIntent.getExtras();
         needsBoth = info.getBoolean("needsBoth");           //check if key pattern is needed before going to send msg
         info.putBoolean("needsPattern",true);
-
+        action = info.getString("action");
         bNext = (Button) findViewById(R.id.bNext);          //go automatically to next screen (TESTING ONLY)
 
         bNext.setOnClickListener(new View.OnClickListener() {
@@ -50,10 +46,13 @@ public class PatternEncrypt extends AppCompatActivity implements View.OnClickLis
                     startActivity(keyAct);
                     finish();
                 }else{
-                    Intent sendMsg = new Intent(PatternEncrypt.this, SendMessage.class);
+                    Intent newIntend = new Intent(PatternEncrypt.this, SendMessage.class);
+                    if (action.equals("readMessage")) {
+                        newIntend = new Intent(PatternEncrypt.this, MessageDisplay.class);
+                    }
                     info.putString("patternKey",code);
-                    sendMsg.putExtras(info);
-                    startActivity(sendMsg);
+                    newIntend.putExtras(info);
+                    startActivity(newIntend);
                     finish();
                 }
             }
@@ -89,7 +88,7 @@ public class PatternEncrypt extends AppCompatActivity implements View.OnClickLis
         // do something when the button is clicked
         // Yes we will handle click here but which button clicked??? We don't know
         count++;
-        if(count < 8) {
+
             // So we will make
             switch (v.getId() /*to get clicked view id**/) {
                 case R.id.button1:
@@ -161,7 +160,7 @@ public class PatternEncrypt extends AppCompatActivity implements View.OnClickLis
                     break;
             }
 
-        }
+
     }
 
     public String getCode() {

@@ -37,7 +37,7 @@ import org.json.JSONObject;
 public class Messaging extends AppCompatActivity{
     /*link to get a list of contacts */
     //link to be used to connect
-    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getContacts.php";
+    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/getContacts1.php";
     String uname;           // will store current logged in user's username
     String msg = "";        //msg stored
     String recv = "";       //who recieved msg
@@ -45,6 +45,7 @@ public class Messaging extends AppCompatActivity{
     String newMsg = "";     //formatted msg
     Intent checkMessageIntent;
     DatabaseHelper myDb;
+    ArrayList<Contact>  contactList;
 
     @Override
 
@@ -54,8 +55,9 @@ public class Messaging extends AppCompatActivity{
         setContentView(R.layout.message);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.options);
         setSupportActionBar(myToolbar);
-
+        this.deleteDatabase("Random.db");
         myDb = new DatabaseHelper(this);
+        contactList = new ArrayList<>();
 
         //get username from previous activity
         Intent thisIntent = getIntent();
@@ -128,14 +130,17 @@ public class Messaging extends AppCompatActivity{
                      * set it to a ListView to be displayed to the user as
                      * their contacts list
                      */
-                    ArrayList<String> contactList = new ArrayList<String>();
                     Log.v("resultFromJSON:",result);
 
                     try {
-                        JSONArray jsonResult = new JSONArray(result);
+                        JSONArray jsonResult = new JSONArray(result);           //turn result string into JSONArray
                         for(int i = 0; i < jsonResult.length(); i++){
-                            JSONObject jsonObj = jsonResult.getJSONObject(i);
-                            contactList.add(jsonObj.getString("user"));
+                            JSONObject jsonObj = jsonResult.getJSONObject(i);   //turn each item in array in JSONObject
+                            String userName = jsonObj.getString("user");         //turn to obj to string and add to ArrayList
+                            String contactName = jsonObj.getString("name");         //turn to obj to string and add to ArrayList
+
+                            Contact contact = new Contact(userName, contactName);
+                            contactList.add(contact);
                         }
                         Log.v("after List set",contactList.toString());
 
@@ -143,19 +148,19 @@ public class Messaging extends AppCompatActivity{
                         Log.v("Error JSON Decoding:", e.getMessage());
                     }
 
-                    ArrayAdapter adapter = new ArrayAdapter(Messaging.this, R.layout.adaptor_text_layout, contactList);
+                    ContactListAdapter adapter = new ContactListAdapter(Messaging.this, contactList);
                     final ListView listView = (ListView) findViewById(R.id.contactList);
                     listView.setAdapter(adapter);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         public void onItemClick(AdapterView<?> parent, View view,int position, long id)
                         {
                             /*store contact user chose */
-                            String selectedFromList =(listView.getItemAtPosition(position).toString());
+                            Object selectedContact = listView.getItemAtPosition(position);
 
                             /*start activity where user is given an option of choosing encryption options */
                             Intent selectEn = new Intent(Messaging.this, SetEncryption.class);
                             selectEn.putExtra("uname", uname);
-                            selectEn.putExtra("recv", selectedFromList);
+                            selectEn.putExtra("recv", ((Contact) selectedContact).getUserName());
                             startActivity(selectEn);
                             finish();
 
@@ -212,6 +217,7 @@ public class Messaging extends AppCompatActivity{
                 /*send info and start check message activity */
                 Intent checkInbox = new Intent(Messaging.this, Inbox.class);
                 checkInbox.putExtra("current",uname);
+                checkInbox.putExtra("contactList", contactList);
                 startActivity(checkInbox);
 
                 return true;

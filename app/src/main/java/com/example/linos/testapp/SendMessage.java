@@ -25,19 +25,21 @@ import java.net.URLEncoder;
  */
 
 public class SendMessage extends AppCompatActivity{
-    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/newMessage.php";
+    private static final String LINK = "http://galadriel.cs.utsa.edu/~group5/newMessage1.php";
     Button bSubmit;                 //button to send msg
     Boolean needsBoth;              //needs both encryptions
     Boolean needsPattern;           //needs pattern encryption
     Boolean needsKey;               //needs key encryption
     Bundle info;                    //hold info needed to send message and check options chosen
     EditText edMessage;             //message edittext
-    String uname;                   //uname of user to be sent to
+    String recv;                   //uname of user to be sent to
     String sender;                  //current username
     String key;                     //key to encrypt
     String patternKey;              //key from pattern chosen
     String salt = "";               //salt for encryption (delicious)
     String encryptedMessage = "";   //message to be sent
+    String encryptMethod = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +49,7 @@ public class SendMessage extends AppCompatActivity{
         /*grab nessecary info from previous activity */
         info = ResetIntent.getExtras();
         sender = info.getString("uname");
-        uname = info.getString("reciever");
+        recv = info.getString("reciever");
         needsKey = info.getBoolean("needsKey");
         needsBoth = info.getBoolean("needsBoth");
         needsPattern = info.getBoolean("needsPattern");
@@ -71,7 +73,7 @@ public class SendMessage extends AppCompatActivity{
                     Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
                     String msg = edMessage.getText().toString();
                     encryptedMessage = encryption.encryptOrNull(msg);
-
+                    encryptMethod = "1";
                 }
                 //user only wants pattern encryption
                 else if(needsPattern && !needsBoth){  //message does not need key encryption
@@ -80,7 +82,7 @@ public class SendMessage extends AppCompatActivity{
                     Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
                     String msg = edMessage.getText().toString();
                     encryptedMessage = encryption.encryptOrNull(msg);
-
+                    encryptMethod = "2";
                 }
                 //user wants both encryptions
                 else if(needsBoth){
@@ -93,19 +95,21 @@ public class SendMessage extends AppCompatActivity{
                     encryptedMessage = encryption.encryptOrNull(msg);
 
                     Encryption encryption2 = Encryption.getDefault(patternKey, salt, new byte[16]);
-                    encryptedMessage = encryption.encryptOrNull(encryptedMessage);
+                    encryptedMessage = encryption2.encryptOrNull(encryptedMessage);
 
+                    encryptMethod = "3";
                 }
                 //user want no encryption
                 else{
                     encryptedMessage = edMessage.getText().toString();
+                    encryptMethod = "0";
                 }
 
 
                 //message to be sent
-                String message = uname +"~" + sender +"~"+encryptedMessage;
+                String message = encryptedMessage;
                 Log.v("Message: ", message);
-                initSubmit(v, uname, message);
+                initSubmit(v, recv, sender, message);
 
             }
         });
@@ -131,7 +135,7 @@ public class SendMessage extends AppCompatActivity{
     }
 
 
-    public void initSubmit(final View v, final String uname, final String message) {
+    public void initSubmit(final View v, final String recv, final String sender, final String message) {
         class QuestionASync extends AsyncTask<String, Void, String> {
 
             private Dialog loadingDiag;
@@ -157,10 +161,13 @@ public class SendMessage extends AppCompatActivity{
 
                      ****************************************************/
                     String data = URLEncoder.encode("uname", "UTF-8")
-                            + "=" + URLEncoder.encode(uname, "UTF-8");
+                            + "=" + URLEncoder.encode(recv, "UTF-8");
                     data += "&" + URLEncoder.encode("message", "UTF-8")
                             + "=" + URLEncoder.encode(message, "UTF-8");
-
+                    data += "&" + URLEncoder.encode("sender", "UTF-8")
+                            + "=" + URLEncoder.encode(sender, "UTF-8");
+                    data += "&" + URLEncoder.encode("encrypt", "UTF-8")
+                            + "=" + URLEncoder.encode(encryptMethod, "UTF-8");
                     //Log.v("user: ", uname);
                     //Log.v("answer", answer);
 
@@ -210,6 +217,6 @@ public class SendMessage extends AppCompatActivity{
 
         }
         QuestionASync qas = new QuestionASync();
-        qas.execute(LINK , uname, message);
+        qas.execute(LINK , recv, message);
     }
 }

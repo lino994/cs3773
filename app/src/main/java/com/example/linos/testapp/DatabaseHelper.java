@@ -16,8 +16,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String TABLE_NAME = "messages_table";
     public static final String COL_1 = "id";
     public static final String COL_2 = "message";
-    public static final String COL_3 = "username";
+    public static final String COL_3 = "sender";
     public static final String COL_4 = "time";
+    public static final String COL_5 = "messageNumber";
+    public static final String COL_6 = "recv";
+    public static final String COL_7 = "read";
+    public static final String COL_8 = "encrypt";
+    private boolean[] messageStatus;
     //private static final int DATABASE_VERSION = 2;
 
 
@@ -28,8 +33,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table if not exists " + TABLE_NAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT,message TEXT,username Text,time TEXT)");
-
+        db.execSQL("create table if not exists " + TABLE_NAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT,message TEXT,sender Text," +
+                "time TEXT, messageNumber INT, recv TEXT, read INT, encrypt INT)");
     }
 
     @Override
@@ -39,17 +44,27 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     }
 
-    public boolean insertData(String message,String username,String time){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_2,message);
-        contentValues.put(COL_3,username);
-        contentValues.put(COL_4,time);
-        long result = db.insert(TABLE_NAME,null,contentValues);
-        if(result == -1){
+    public boolean insertData(String message,String sender,String time,
+                              int messageNumber, String recv, int read, int encrypt){
+
+        if (oldMessage(messageNumber)) {
             return false;
         }
-        else{
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_2, message);
+        contentValues.put(COL_3, sender);
+        contentValues.put(COL_4, time);
+        contentValues.put(COL_5, messageNumber);
+        contentValues.put(COL_6, recv);
+        contentValues.put(COL_7, read);
+        contentValues.put(COL_8, encrypt);
+        long result = db.insert(TABLE_NAME, null, contentValues);
+
+        if(result == -1) {
+            return false;
+        } else {
             return true;
         }
     }
@@ -66,6 +81,39 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         if(db != null) {
             db.execSQL("delete from " + TABLE_NAME);
             onCreate(db);
+        }
+    }
+
+    public boolean updateRead(int messageNumber, int read) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("read", 1);
+
+        int result = db.update(TABLE_NAME, cv, "messageNumber = ?"
+                , new String[]{String.valueOf(messageNumber)});
+        return result > 0;
+    }
+
+    public boolean updateTime(int messageNumber, String timeString) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COL_4, timeString);
+
+        int result = db.update(TABLE_NAME, cv, "messageNumber = ?"
+                , new String[]{String.valueOf(messageNumber)});
+        return result > 0;
+    }
+
+    private boolean oldMessage(int messageNumber) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME +
+                " where " + COL_5 + "= ?", new String[] {String.valueOf(messageNumber)});
+        int count = res.getCount();
+        if (count > 0) {
+            System.out.println("count = " + count);
+            return true;
+        } else {
+            return false;
         }
     }
 

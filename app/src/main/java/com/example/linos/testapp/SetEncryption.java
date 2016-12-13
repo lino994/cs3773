@@ -36,7 +36,7 @@ public class SetEncryption extends AppCompatActivity {
         info = new Bundle();
         info.putString("uname",uname);
         info.putString("reciever",reciever);
-
+        info.putString("action", "sendMessage");
         bContinue = (Button) findViewById(R.id.bCont);
 
         /* set the list of options the user will have */
