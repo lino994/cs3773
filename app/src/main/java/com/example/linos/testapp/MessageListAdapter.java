@@ -40,10 +40,14 @@ public class MessageListAdapter extends BaseAdapter {
         TextView contactName = (TextView) v.findViewById(R.id.messageName);
         TextView time = (TextView) v.findViewById(R.id.messageTime);
         ImageView msgUnreadImg = (ImageView) v.findViewById(R.id.viewMessageImg);
+        TextView tvPreview = (TextView) v.findViewById(R.id.tvPreview);
 
         contactName.setText(mMessageList.get(position).getSenderName());
         String timeText = mMessageList.get(position).getTimeString();
+        String previewText = mMessageList.get(position).getMessage();
+
         time.setText(timeText);
+        tvPreview.setText(previewText);
         boolean read = mMessageList.get(position).read();
         if (read) {
             msgUnreadImg.setVisibility(View.INVISIBLE);

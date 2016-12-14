@@ -55,7 +55,7 @@ public class Messaging extends AppCompatActivity{
         setContentView(R.layout.message);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.options);
         setSupportActionBar(myToolbar);
-        this.deleteDatabase("Random.db");
+        //this.deleteDatabase("Random.db");
         myDb = new DatabaseHelper(this);
         contactList = new ArrayList<>();
 
@@ -237,7 +237,7 @@ public class Messaging extends AppCompatActivity{
         }
     }
 
-    public void onNothingSelected(AdapterView<?> arg0) {
-        // TODO Auto-generated method stub
+    public void onBackPressed() {
+
     }
 }

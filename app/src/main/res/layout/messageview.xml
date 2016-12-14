@@ -57,17 +57,25 @@
                     <TextView
                         android:text="Name"
                         android:layout_width="match_parent"
-                        android:layout_height="35dp"
                         android:id="@+id/messageName"
                         android:textAllCaps="true"
                         android:textSize="20dp"
-                        android:textColor = "@android:color/black"/>
+                        android:textColor = "@android:color/black"
+                        android:layout_height="25dp" />
+
+                    <TextView
+                        android:text="TextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvPreview"
+                        android:textSize="18sp" />
 
                     <TextView
                         android:text="Time"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/messageTime" />
+                        android:id="@+id/messageTime"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
             </LinearLayout>

@@ -33,6 +33,7 @@ public class SetEncryption extends AppCompatActivity {
          */
         uname = myIntent.getExtras().getString("uname");
         reciever = myIntent.getExtras().getString("recv");
+        boolean response = myIntent.getExtras().getBoolean("response");
         info = new Bundle();
         info.putString("uname",uname);
         info.putString("reciever",reciever);

@@ -75,20 +75,12 @@ public class Message {
         return read;
     }
 
-    public void readMessage() {
-        read = true;
-        time = new Date();
-        timeString = getTimeString();
-    }
 
     public Date getTime() {
         return time;
     }
 
     public String getTimeString() {
-        String timeString;
-
-        timeString = dateFormat.format(time);
 
         return timeString;
     }
@@ -101,6 +93,7 @@ public class Message {
     public void setTimeString(String timeString) {
         try {
             time = dateFormat.parse(timeString);
+            this.timeString = timeString;
         } catch (Exception e) {
             System.out.println("Date error:" + e.getMessage());
         }
@@ -123,8 +116,12 @@ public class Message {
         b.putString("time", timeString);
         b.putInt("encrypt", encryptMethod);
         b.putBoolean("read", read);
+        b.putInt("messageNumber", messageNumber);
 
         return b;
     }
 
+    public void setMessageText(String messageText) {
+        this.msg = messageText;
+    }
 }

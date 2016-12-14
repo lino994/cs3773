@@ -22,6 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String COL_6 = "recv";
     public static final String COL_7 = "read";
     public static final String COL_8 = "encrypt";
+    public static final String COL_9 = "try";
     private boolean[] messageStatus;
     //private static final int DATABASE_VERSION = 2;
 
@@ -34,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table if not exists " + TABLE_NAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT,message TEXT,sender Text," +
-                "time TEXT, messageNumber INT, recv TEXT, read INT, encrypt INT)");
+                "time TEXT, messageNumber INT, recv TEXT, read INT, encrypt INT, try INT)");
     }
 
     @Override
@@ -60,6 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         contentValues.put(COL_6, recv);
         contentValues.put(COL_7, read);
         contentValues.put(COL_8, encrypt);
+        contentValues.put(COL_9, 0);
         long result = db.insert(TABLE_NAME, null, contentValues);
 
         if(result == -1) {
@@ -76,6 +78,16 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         Cursor res = db.rawQuery("select * from " + TABLE_NAME ,null);
         return res;
     }
+
+    public Cursor getMessageAt(int messageNumber){
+        SQLiteDatabase db = this.getWritableDatabase();
+        int d = db.getVersion();
+        Log.v("db",Integer.toString(d));
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE messageNumber=?"
+                , new String[]{String.valueOf(messageNumber)});
+        return res;
+    }
+
     public void delete(){
         SQLiteDatabase db = this.getWritableDatabase();
         if(db != null) {
@@ -84,11 +96,35 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         }
     }
 
+    public boolean updateMessageText(int messageNumber, String messageText) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COL_2, messageText);
+        int result = db.update(TABLE_NAME, cv, "messageNumber = ?"
+                , new String[]{String.valueOf(messageNumber)});
+        return result > 0;
+    }
     public boolean updateRead(int messageNumber, int read) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("read", 1);
+        int result = db.update(TABLE_NAME, cv, "messageNumber = ?"
+                , new String[]{String.valueOf(messageNumber)});
+        return result > 0;
+    }
+    public boolean updateEncrypt(int messageNumber, int encrypt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COL_8, encrypt);
+        int result = db.update(TABLE_NAME, cv, "messageNumber = ?"
+                , new String[]{String.valueOf(messageNumber)});
+        return result > 0;
+    }
 
+    public boolean updateTry(int messageNumber, int value) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COL_9, value);
         int result = db.update(TABLE_NAME, cv, "messageNumber = ?"
                 , new String[]{String.valueOf(messageNumber)});
         return result > 0;
@@ -115,6 +151,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         } else {
             return false;
         }
+    }
+
+    public boolean deleteMessage(int messageNumber) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        int result = db.delete(TABLE_NAME, "messageNumber = ?"
+                , new String[]{String.valueOf(messageNumber)});
+        return result > 0;
     }
 
 }

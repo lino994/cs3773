@@ -38,7 +38,7 @@ public class CheckMessage extends Service {
 
     public void onCreate() {
         running = true;
-        this.deleteDatabase(DATABASE_NAME);
+        this.deleteDatabase("random.db");
         myDb = new DatabaseHelper(this);
 
     }
@@ -128,15 +128,14 @@ public class CheckMessage extends Service {
                 String sender = job.getString("sender");
                 String number = job.getString("messageNumber");
                 String encrypt = job.getString("encrypt");
-                Date recvTime = new Date();
-                String timeString = dateFormat.format(recvTime);
+                String timeString = job.getString("time");
 
                 int messageNumber = Integer.parseInt(number);
                 int encryptMethod = Integer.parseInt(encrypt);
 
                 myDb.insertData(msg, sender, timeString, messageNumber, recv, 0, encryptMethod);
-                Message newMessage = new Message(sender, recv, msg, messageNumber, encryptMethod);
-                newMessage.setTime(recvTime);
+
+                sendNotification(sender, recv);
             }
 
         } catch (Exception e){
@@ -144,4 +143,48 @@ public class CheckMessage extends Service {
         }
     }
 
+    private void sendNotification(String uname, String sender) {
+        String uri = "http://galadriel.cs.utsa.edu/~group5/newMessage1.php";
+        String message = sender + " has got your message!";
+
+        String timeString = "";
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        Date date = new Date();
+        timeString = dateFormat.format(date);
+
+        try{
+
+            String data = URLEncoder.encode("uname", "UTF-8")
+                    + "=" + URLEncoder.encode(uname, "UTF-8");
+            data += "&" + URLEncoder.encode("message", "UTF-8")
+                    + "=" + URLEncoder.encode(message, "UTF-8");
+            data += "&" + URLEncoder.encode("sender", "UTF-8")
+                    + "=" + URLEncoder.encode(sender, "UTF-8");
+            data += "&" + URLEncoder.encode("encrypt", "UTF-8")
+                    + "=" + URLEncoder.encode("0", "UTF-8");
+            data += "&" + URLEncoder.encode("time", "UTF-8")
+                    + "=" + URLEncoder.encode(timeString, "UTF-8");
+
+            URL url = new URL(uri);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setDoOutput(true);
+            OutputStreamWriter osWrite = new OutputStreamWriter(connection.getOutputStream());
+            osWrite.write(data);
+            osWrite.flush();
+
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+
+            while((line = bReader.readLine()) != null) {
+                Log.v("line: ", line);
+                sb.append(line + "\n");
+            }
+
+        }catch(Exception e){
+            Log.v("Conn Error  :", e.getMessage());
+        }
+    }
 }

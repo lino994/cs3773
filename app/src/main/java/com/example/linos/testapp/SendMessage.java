@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -18,6 +19,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -56,8 +60,8 @@ public class SendMessage extends AppCompatActivity{
 
         /*where user enters message*/
         edMessage = (EditText) findViewById(R.id.edMessage);
-
-
+        TextView recvTV = (TextView)  findViewById(R.id.toMessage);
+        recvTV.setText("To: " + recv);
         /*initalize button to send */
         bSubmit = (Button) findViewById(R.id.send);
 
@@ -67,49 +71,55 @@ public class SendMessage extends AppCompatActivity{
             public void onClick(View v)
             {
                 salt = sender;
-                //user only wants key encryption
-                if(needsKey && !needsBoth) {
-                    key = info.getString("key");
-                    Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
-                    String msg = edMessage.getText().toString();
-                    encryptedMessage = encryption.encryptOrNull(msg);
-                    encryptMethod = "1";
+                String msg1 = edMessage.getText().toString();
+                if (msg1.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Field Empty", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    //user only wants key encryption
+                    if (needsKey && !needsBoth) {
+                        key = info.getString("key");
+                        Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
+                        String msg = edMessage.getText().toString();
+                        encryptedMessage = encryption.encryptOrNull(msg);
+                        encryptMethod = "1";
+                    }
+                    //user only wants pattern encryption
+                    else if (needsPattern && !needsBoth) {  //message does not need key encryption
+                        key = info.getString("patternKey");
+
+                        Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
+                        String msg = edMessage.getText().toString();
+                        encryptedMessage = encryption.encryptOrNull(msg);
+                        encryptMethod = "2";
+                    }
+                    //user wants both encryptions
+                    else if (needsBoth) {
+                        key = info.getString("key");
+
+                        patternKey = info.getString("patternKey");
+
+                        Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
+                        String msg = edMessage.getText().toString();
+                        encryptedMessage = encryption.encryptOrNull(msg);
+
+                        Encryption encryption2 = Encryption.getDefault(patternKey, salt, new byte[16]);
+                        encryptedMessage = encryption2.encryptOrNull(encryptedMessage);
+
+                        encryptMethod = "3";
+                    }
+                    //user want no encryption
+                    else {
+                        encryptedMessage = edMessage.getText().toString();
+                        encryptMethod = "0";
+                    }
+
+
+                    //message to be sent
+                    String message = encryptedMessage;
+                    Log.v("Message: ", message);
+                    initSubmit(v, recv, sender, message);
                 }
-                //user only wants pattern encryption
-                else if(needsPattern && !needsBoth){  //message does not need key encryption
-                    key = info.getString("patternKey");
-
-                    Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
-                    String msg = edMessage.getText().toString();
-                    encryptedMessage = encryption.encryptOrNull(msg);
-                    encryptMethod = "2";
-                }
-                //user wants both encryptions
-                else if(needsBoth){
-                    key = info.getString("key");
-
-                    patternKey = info.getString("patternKey");
-
-                    Encryption encryption = Encryption.getDefault(key, salt, new byte[16]);
-                    String msg = edMessage.getText().toString();
-                    encryptedMessage = encryption.encryptOrNull(msg);
-
-                    Encryption encryption2 = Encryption.getDefault(patternKey, salt, new byte[16]);
-                    encryptedMessage = encryption2.encryptOrNull(encryptedMessage);
-
-                    encryptMethod = "3";
-                }
-                //user want no encryption
-                else{
-                    encryptedMessage = edMessage.getText().toString();
-                    encryptMethod = "0";
-                }
-
-
-                //message to be sent
-                String message = encryptedMessage;
-                Log.v("Message: ", message);
-                initSubmit(v, recv, sender, message);
 
             }
         });
@@ -150,7 +160,10 @@ public class SendMessage extends AppCompatActivity{
                 String uri = params[0];
                 String uname = params[1];
                 String message = params[2];
-
+                String timeString = "";
+                DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                Date date = new Date();
+                timeString = dateFormat.format(date);
                 try{
                     /******************TEST USERS****************************
                      Username : UserOne
@@ -168,6 +181,8 @@ public class SendMessage extends AppCompatActivity{
                             + "=" + URLEncoder.encode(sender, "UTF-8");
                     data += "&" + URLEncoder.encode("encrypt", "UTF-8")
                             + "=" + URLEncoder.encode(encryptMethod, "UTF-8");
+                    data += "&" + URLEncoder.encode("time", "UTF-8")
+                            + "=" + URLEncoder.encode(timeString, "UTF-8");
                     //Log.v("user: ", uname);
                     //Log.v("answer", answer);
 

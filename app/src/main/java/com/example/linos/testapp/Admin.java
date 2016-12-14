@@ -244,7 +244,7 @@ public class Admin extends AppCompatActivity {
 
 
 
-    public void onNothingSelected(AdapterView<?> arg0) {
+    public void onBackPressed() {
         // TODO Auto-generated method stub
     }
 }

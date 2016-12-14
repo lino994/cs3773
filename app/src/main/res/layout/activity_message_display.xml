@@ -20,27 +20,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <TextView
-            android:text="fromText"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:id="@+id/fromText"
-            android:textSize="15dp"
-            android:textColor="@android:color/black"
-            />
-
-        <TextView
-            android:text="messageText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/messageTextDisplay"
-            android:textSize="15dp"
-            android:textColor="@android:color/black"
-            android:nestedScrollingEnabled="true"
-            android:layout_below="@+id/fromText"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -51,23 +30,41 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="0dp">
 
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:id="@+id/responseMessage"
-                android:inputType="textMultiLine"
-                android:hint="Type Message" />
-
-            <Button
-                android:text="SEND"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/sendButton"
-                android:layout_weight="1"
-                android:layout_marginBottom="0dp" />
-
         </LinearLayout>
+
+        <TextView
+            android:text="fromText"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/fromText"
+            android:textSize="15dp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_weight="0.15"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:text="messageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/messageTextDisplay"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:nestedScrollingEnabled="true"
+            android:layout_below="@+id/fromText"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:text="REPLY"
+            android:layout_height="wrap_content"
+            android:id="@+id/replyButton"
+            android:layout_weight="0.15"
+            android:layout_above="@+id/messageTextDisplay"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_width="100dp"
+            android:layout_alignParentTop="true" />
 
     </RelativeLayout>
 </ScrollView>
